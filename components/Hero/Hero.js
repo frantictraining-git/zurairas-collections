@@ -9,12 +9,12 @@ export default function Hero() {
   const textRef    = useRef(null);
   const imgRef     = useRef(null);
 
-  /* Parallax on scroll */
+  /* Subtle parallax on image panel */
   useEffect(() => {
     const onScroll = () => {
-      if (!heroRef.current) return;
+      if (!imgRef.current) return;
       const y = window.scrollY;
-      if (imgRef.current) imgRef.current.style.transform = `translateY(${y * 0.35}px)`;
+      imgRef.current.style.transform = `translateY(${y * 0.18}px)`;
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
@@ -25,33 +25,19 @@ export default function Hero() {
     if (!textRef.current) return;
     const children = textRef.current.querySelectorAll(`.${styles.animItem}`);
     children.forEach((el, i) => {
-      el.style.transitionDelay = `${0.1 + i * 0.12}s`;
+      el.style.transitionDelay = `${0.08 + i * 0.13}s`;
       setTimeout(() => el.classList.add(styles.visible), 80);
     });
   }, []);
 
   return (
     <section className={styles.hero} ref={heroRef} aria-label="Hero banner">
-      {/* Parallax Background Image */}
-      <div className={styles.imgWrap} ref={imgRef}>
-        <Image
-          src="/images/482347239_1101778775297742_5147514746175651940_n.jpg"
-          alt="Zuraira's Collections — Handcrafted embroidered garments"
-          fill
-          priority
-          fetchPriority="high"
-          className={styles.bgImg}
-          sizes="100vw"
-        />
-        <div className={styles.overlay} />
-      </div>
+      {/* Decorative accent blobs */}
+      <div className={styles.blob1} aria-hidden="true" />
+      <div className={styles.blob2} aria-hidden="true" />
 
-      {/* Floating accent shapes */}
-      <div className={styles.shape1} aria-hidden="true" />
-      <div className={styles.shape2} aria-hidden="true" />
-
-      {/* Content */}
-      <div className={`${styles.content} container`} ref={textRef}>
+      {/* Left — Text Content */}
+      <div className={`${styles.content}`} ref={textRef}>
         <div className={`${styles.tagline} ${styles.animItem}`}>
           <span className="tag">Handcrafted in Toronto 🍁</span>
         </div>
@@ -88,16 +74,43 @@ export default function Hero() {
             <strong>200+</strong>
             <span>Unique Pieces</span>
           </div>
-          <div className={styles.divider} aria-hidden="true" />
+          <div className={styles.statDivider} aria-hidden="true" />
           <div className={styles.stat}>
             <strong>100%</strong>
             <span>Handcrafted</span>
           </div>
-          <div className={styles.divider} aria-hidden="true" />
+          <div className={styles.statDivider} aria-hidden="true" />
           <div className={styles.stat}>
             <strong>CA</strong>
             <span>Ships Across Canada</span>
           </div>
+        </div>
+      </div>
+
+      {/* Right — Image Panel */}
+      <div className={styles.imgPanel}>
+        <div className={styles.imgWrap} ref={imgRef}>
+          <Image
+            src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1400&q=85&fit=crop"
+            alt="Elegant fashion — Zuraira's Collections"
+            fill
+            priority
+            fetchPriority="high"
+            className={styles.bgImg}
+            sizes="(max-width: 900px) 100vw, 50vw"
+          />
+          {/* Subtle light wash to lift whites */}
+          <div className={styles.imgOverlay} />
+        </div>
+
+        {/* Floating card */}
+        <div className={styles.floatCard}>
+          <span className={styles.floatDot} />
+          <div>
+            <p className={styles.floatLabel}>New Arrival</p>
+            <p className={styles.floatName}>Embroidered Collection</p>
+          </div>
+          <span className={styles.floatPrice}>From CAD 145</span>
         </div>
       </div>
 
