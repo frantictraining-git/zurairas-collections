@@ -1,5 +1,38 @@
 /* ═══════════════════════════════════════════════════════
-   THEME A — MODA OPERANDI
+   THEME A — CURRENT (Zuraira's Custom)
+   Bright split layout, warm ivory, floating product cards
+   ═══════════════════════════════════════════════════════ */
+[data-theme="current"] {
+  --theme-bg:           #FDFAF5;   /* Warm ivory */
+  --theme-bg-alt:       #F7F3EA;   
+  --theme-surface:      #FFFFFF;
+  --theme-text:         #2C2C2C;   /* Charcoal */
+  --theme-text-mid:     #555555;
+  --theme-text-muted:   #888888;
+  --theme-border:       rgba(0,0,0,0.08);
+  --theme-accent:       #E8956D;   /* Warm Terracotta */
+  --theme-accent-light: #F5C842;   /* Saffron Gold */
+  --theme-cta-bg:       #2C2C2C;
+  --theme-cta-text:     #FFFFFF;
+  --theme-tag-bg:       rgba(232, 149, 109, 0.1);
+  --theme-tag-text:     #E8956D;
+
+  /* Typography */
+  --theme-font-display: 'Playfair Display', serif;
+  --theme-font-body:    'Inter', system-ui, sans-serif;
+  --theme-nav-case:     none;
+  --theme-nav-spacing:  normal;
+  --theme-nav-weight:   500;
+  --theme-nav-size:     0.9rem;
+
+  /* Hero specific */
+  --theme-hero-bg:      #FDFAF5;
+  --theme-img-radius:   40px 0 0 40px;
+  --theme-card-radius:  14px;
+}
+
+/* ═══════════════════════════════════════════════════════
+   THEME B — MODA OPERANDI
    Warm cream/parchment, serif editorial, tall imagery,
    terracotta + gold accents, generous white space
    ═══════════════════════════════════════════════════════ */
@@ -73,6 +106,7 @@
 
 /* ─── Apply theme tokens to existing CSS variables ──── */
 
+[data-theme="current"],
 [data-theme="moda"],
 [data-theme="nap"] {
   /* Override global tokens */
@@ -84,10 +118,14 @@
 }
 
 /* ─── Body background ──── */
+[data-theme="current"] body { background: #FDFAF5; }
 [data-theme="moda"] body { background: #F8F5EE; }
 [data-theme="nap"]  body { background: #FFFFFF; }
 
 /* ─── Navbar theming ──── */
+[data-theme="current"] .navbar-scrolled-bg {
+  background: rgba(253, 250, 245, 0.95) !important;
+}
 [data-theme="moda"] .navbar-scrolled-bg {
   background: rgba(248,245,238,0.95) !important;
 }
@@ -97,6 +135,13 @@
 }
 
 /* ─── Tag / Badge ──── */
+[data-theme="current"] .tag {
+  background: var(--theme-tag-bg);
+  color: var(--theme-tag-text);
+  border-radius: 999px;
+  letter-spacing: 0.05em;
+  padding: 0.4rem 0.8rem;
+}
 [data-theme="moda"] .tag {
   background: var(--theme-tag-bg);
   color: var(--theme-tag-text);
@@ -111,6 +156,12 @@
 }
 
 /* ─── Primary Button ──── */
+[data-theme="current"] .btn-primary {
+  background: #E8956D;
+  border-radius: 999px;
+}
+[data-theme="current"] .btn-primary::before { background: #d37a50; }
+
 [data-theme="moda"] .btn-primary {
   background: #1A1410;
   border-radius: 2px;
@@ -125,6 +176,16 @@
 [data-theme="nap"] .btn-primary::before { background: #333; }
 
 /* ─── Outline Button ──── */
+[data-theme="current"] .btn-outline {
+  border-color: #E8956D;
+  color: #E8956D;
+  border-radius: 999px;
+}
+[data-theme="current"] .btn-outline:hover {
+  background: #E8956D;
+  color: #fff;
+}
+
 [data-theme="moda"] .btn-outline {
   border-color: #1A1410;
   color: #1A1410;
@@ -142,10 +203,12 @@
 }
 
 /* ─── Theme Toggle accent ──── */
+[data-theme="current"] { --theme-accent: #E8956D; }
 [data-theme="moda"] { --theme-accent: #8B6F47; }
 [data-theme="nap"]  { --theme-accent: #000000; }
 
 /* ─── Section alternate backgrounds ──── */
+[data-theme="current"] section:nth-of-type(even) { background: #F7F3EA; }
 [data-theme="moda"] section:nth-of-type(even) { background: #F0EBE1; }
 [data-theme="nap"]  section:nth-of-type(even) { background: #F7F7F7; }
 
@@ -156,6 +219,7 @@
 [data-theme="nap"] * { border-radius: 0 !important; }
 
 /* ─── Moda Specific: Slightly warmer transitions ──── */
+[data-theme="current"] *,
 [data-theme="moda"] * {
   transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }

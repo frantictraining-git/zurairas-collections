@@ -1,0 +1,105 @@
+/* ─── Net-a-Porter Style Hero ─── */
+.hero {
+  position: relative;
+  min-height: calc(100svh - 80px); /* Account for navbar */
+  margin-top: 80px;
+  background-color: var(--theme-bg); /* #FFFFFF */
+  overflow: hidden;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: inherit;
+  border-bottom: 1px solid var(--theme-border);
+}
+
+.imageCol {
+  position: relative;
+  border-right: 1px solid var(--theme-border);
+  overflow: hidden;
+}
+
+.imgWrap {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+
+.bgImg {
+  object-fit: cover;
+  object-position: center;
+  filter: grayscale(100%) contrast(1.1); /* NAP often uses high contrast, black and white or muted color */
+  transition: filter 0.5s ease;
+}
+
+.bgImg:hover {
+  filter: grayscale(0%) contrast(1.05);
+}
+
+.textCol {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(3rem, 6vw, 6rem);
+}
+
+.brand {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 400;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--theme-text-muted);
+  margin-bottom: 1.5rem;
+}
+
+.headline {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 5vw, 4rem);
+  font-weight: 300; /* NAP uses very light elegant serifs */
+  line-height: 1.15;
+  color: var(--theme-text);
+  margin-bottom: 2rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.sub {
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(0.85rem, 1.2vw, 1rem);
+  line-height: 1.8;
+  color: var(--theme-text-mid);
+  margin-bottom: 3rem;
+  max-width: 450px;
+  font-weight: 300;
+}
+
+.ctas {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: max-content;
+}
+
+/* Base animation classes */
+.animItem {
+  opacity: 0;
+  transform: translateX(20px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.animItem.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: 50vh auto;
+  }
+  .imageCol {
+    border-right: none;
+    border-bottom: 1px solid var(--theme-border);
+  }
+}
