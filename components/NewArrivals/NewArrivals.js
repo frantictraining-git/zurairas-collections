@@ -63,12 +63,15 @@ export default function NewArrivals() {
       <div className="container">
         {/* Header */}
         <div className={`${styles.header} reveal`}>
-          <div>
-            <p className="label" style={{ color: 'var(--color-primary)', marginBottom: '0.5rem' }}>Fresh In</p>
-            <h2 id="arrivals-heading" className="display-md">New Arrivals</h2>
+          <div className={styles.headerText}>
+            <p className={styles.eyebrow}>740 NEW ITEMS</p>
+            <h2 id="arrivals-heading" className={styles.headline}>New In</h2>
           </div>
-          <a href="/shop?sort=new" className="btn-outline" id="arrivals-view-all">
-            <span>See All</span>
+          <a href="/shop?sort=new" className={styles.shopNow} id="arrivals-view-all">
+            Shop now
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
           </a>
         </div>
 

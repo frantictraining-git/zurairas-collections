@@ -4,8 +4,51 @@
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  margin-bottom: 3rem;
+  margin-bottom: 3.5rem;
   gap: 1rem;
+  border-bottom: 1px solid var(--theme-border);
+  padding-bottom: 1rem;
+}
+
+.headerText {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.eyebrow {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  color: var(--theme-text-muted);
+}
+
+.headline {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 300;
+  color: var(--theme-text);
+  line-height: 1.1;
+  letter-spacing: 0.05em;
+}
+
+.shopNow {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--theme-text);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  transition: opacity 0.3s ease;
+}
+
+.shopNow:hover {
+  opacity: 0.6;
 }
 
 /* ─── Grid ─── */

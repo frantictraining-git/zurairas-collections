@@ -1,11 +1,10 @@
 import Navbar   from '@/components/Navbar/Navbar';
-import Hero      from '@/components/Hero/Hero';
+import Hero      from '@/components/Hero/HeroNAP';
 import BrandStory         from '@/components/BrandStory/BrandStory';
 import CategoryCarousel   from '@/components/CategoryCarousel/CategoryCarousel';
 import NewArrivals        from '@/components/NewArrivals/NewArrivals';
 import CraftsmanshipBanner from '@/components/CraftsmanshipBanner/CraftsmanshipBanner';
 import Testimonials        from '@/components/Testimonials/Testimonials';
-import Newsletter          from '@/components/Newsletter/Newsletter';
 import Footer              from '@/components/Footer/Footer';
 
 export default function Home() {
@@ -19,7 +18,6 @@ export default function Home() {
         <NewArrivals />
         <CraftsmanshipBanner />
         <Testimonials />
-        <Newsletter />
       </main>
       <Footer />
     </>
