@@ -1,0 +1,113 @@
+.banner {
+  position: relative;
+  min-height: clamp(520px, 70vh, 820px);
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.imgContainer {
+  position: absolute;
+  inset: -20%;
+  will-change: transform;
+}
+
+.img {
+  object-fit: cover;
+  object-position: center;
+  filter: brightness(0.45) saturate(1.2);
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    110deg,
+    rgba(28, 8, 0, 0.82) 0%,
+    rgba(212, 84, 10, 0.22) 60%,
+    transparent 100%
+  );
+}
+
+/* ─── Content ─── */
+.content {
+  position: relative;
+  z-index: 10;
+  padding-block: 6rem;
+}
+
+.inner {
+  max-width: 620px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.inner .label { margin-bottom: 1.2rem; }
+
+.headline {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(2.8rem, 6vw, 6rem);
+  font-weight: 900;
+  line-height: 1.05;
+  color: #fff;
+  margin-bottom: 1.8rem;
+  letter-spacing: -0.02em;
+}
+
+.headline span {
+  color: var(--color-accent);
+  font-style: italic;
+}
+
+.body {
+  color: rgba(255,255,255,0.75);
+  margin-bottom: 2.2rem;
+}
+
+/* ─── Features ─── */
+.features {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+  flex-wrap: wrap;
+}
+
+.feature {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.85);
+}
+
+.fIcon {
+  color: var(--color-accent);
+  font-size: 1rem;
+}
+
+/* ─── CTA ─── */
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 1rem 2.4rem;
+  background: var(--color-accent);
+  color: var(--color-charcoal);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  align-self: flex-start;
+}
+
+.cta:hover {
+  background: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+}

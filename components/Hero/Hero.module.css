@@ -1,0 +1,222 @@
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: var(--color-charcoal);
+}
+
+/* ─── Parallax image ─── */
+.imgWrap {
+  position: absolute;
+  inset: -15%;
+  will-change: transform;
+}
+
+.bgImg {
+  object-fit: cover;
+  object-position: center top;
+  filter: brightness(0.55) saturate(1.15);
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    rgba(20, 10, 5, 0.75) 0%,
+    rgba(20, 10, 5, 0.40) 55%,
+    rgba(212, 84, 10, 0.18) 100%
+  );
+}
+
+/* ─── Floating shapes ─── */
+.shape1 {
+  position: absolute;
+  top: 8%;
+  right: 5%;
+  width: clamp(280px, 40vw, 560px);
+  height: clamp(280px, 40vw, 560px);
+  border: 1px solid rgba(232, 160, 32, 0.2);
+  border-radius: 50%;
+  animation: spinSlow 30s linear infinite;
+}
+
+.shape2 {
+  position: absolute;
+  top: 12%;
+  right: 8%;
+  width: clamp(200px, 28vw, 400px);
+  height: clamp(200px, 28vw, 400px);
+  border: 1px solid rgba(232, 160, 32, 0.12);
+  border-radius: 50%;
+  animation: spinSlow 20s linear infinite reverse;
+}
+
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ─── Content ─── */
+.content {
+  position: relative;
+  z-index: 10;
+  padding-top: 6rem;
+  padding-bottom: 6rem;
+  max-width: 820px;
+}
+
+/* ─── Animate-in utility ─── */
+.animItem {
+  opacity: 0;
+  transform: translateY(36px);
+  transition: opacity 1s cubic-bezier(0.16,1,0.3,1),
+              transform 1s cubic-bezier(0.16,1,0.3,1);
+}
+.animItem.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.tagline { margin-bottom: 1.6rem; }
+
+/* ─── Headline ─── */
+.headline {
+  color: #fff;
+  margin-bottom: 1.8rem;
+}
+
+.lineWrap {
+  display: block;
+}
+
+.lineWrap em {
+  font-style: italic;
+  color: var(--color-accent-lt);
+}
+
+.accent {
+  position: relative;
+  color: var(--color-accent);
+}
+
+.accent::after {
+  content: '';
+  position: absolute;
+  bottom: 0.04em;
+  left: 0;
+  right: 0;
+  height: 0.06em;
+  background: var(--color-accent);
+  border-radius: 2px;
+  opacity: 0.5;
+}
+
+/* ─── Subtitle ─── */
+.sub {
+  color: rgba(255,255,255,0.78);
+  margin-bottom: 2.6rem;
+  max-width: 540px;
+}
+
+/* ─── CTAs ─── */
+.ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 3.5rem;
+}
+
+/* Override btn-outline for dark bg */
+.ctas :global(.btn-outline) {
+  border-color: rgba(255,255,255,0.55);
+  color: #fff;
+}
+
+.ctas :global(.btn-outline:hover) {
+  background: #fff;
+  color: var(--color-charcoal);
+}
+
+/* ─── Stats bar ─── */
+.stats {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255,255,255,0.15);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.stat strong {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  line-height: 1;
+}
+
+.stat span {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: rgba(255,255,255,0.6);
+  letter-spacing: 0.05em;
+}
+
+.divider {
+  width: 1px;
+  height: 2.5rem;
+  background: rgba(255,255,255,0.2);
+  flex-shrink: 0;
+}
+
+/* ─── Scroll Hint ─── */
+.scrollHint {
+  position: absolute;
+  bottom: 2.5rem;
+  right: clamp(1.5rem, 5vw, 4rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  z-index: 10;
+}
+
+.scrollHint span {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+
+.scrollLine {
+  width: 1px;
+  height: 60px;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.5), transparent);
+  animation: scrollDrop 2s ease-in-out infinite;
+}
+
+@keyframes scrollDrop {
+  0%   { transform: scaleY(0); transform-origin: top; }
+  50%  { transform: scaleY(1); transform-origin: top; }
+  51%  { transform: scaleY(1); transform-origin: bottom; }
+  100% { transform: scaleY(0); transform-origin: bottom; }
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 640px) {
+  .stats { gap: 1.2rem; }
+  .stat strong { font-size: 1.3rem; }
+  .shape1, .shape2 { display: none; }
+  .scrollHint { display: none; }
+}

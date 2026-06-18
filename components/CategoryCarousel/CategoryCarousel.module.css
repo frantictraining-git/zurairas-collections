@@ -1,0 +1,143 @@
+.section {
+  padding-block: var(--section-pad);
+  background: var(--color-cream);
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 2.5rem;
+  gap: 1rem;
+}
+
+/* ─── Carousel ─── */
+.carouselOuter {
+  overflow: hidden;
+  padding-bottom: 0.5rem;
+}
+
+.track {
+  display: flex;
+  gap: 1.2rem;
+  overflow-x: auto;
+  padding: 0.5rem clamp(1.5rem, 5vw, 4rem) 1.5rem;
+  cursor: grab;
+  scrollbar-width: none;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.track::-webkit-scrollbar { display: none; }
+.track:active { cursor: grabbing; }
+
+/* ─── Card ─── */
+.card {
+  position: relative;
+  flex: 0 0 clamp(240px, 28vw, 320px);
+  height: clamp(340px, 45vw, 480px);
+  border-radius: 12px;
+  overflow: hidden;
+  scroll-snap-align: start;
+  transition: transform 0.5s cubic-bezier(0.16,1,0.3,1),
+              box-shadow 0.5s cubic-bezier(0.16,1,0.3,1);
+  text-decoration: none;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 30px 70px rgba(0,0,0,0.22);
+}
+
+.imgWrap {
+  position: absolute;
+  inset: 0;
+}
+
+.img {
+  object-fit: cover;
+  object-position: center top;
+  transition: transform 0.7s cubic-bezier(0.16,1,0.3,1);
+}
+
+.card:hover .img { transform: scale(1.07); }
+
+.imgOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0,0,0,0.75) 0%,
+    rgba(0,0,0,0.15) 50%,
+    transparent 100%
+  );
+  transition: background 0.4s ease;
+}
+
+.card:hover .imgOverlay {
+  background: linear-gradient(
+    to top,
+    rgba(0,0,0,0.82) 0%,
+    rgba(0,0,0,0.25) 55%,
+    rgba(0,0,0,0.05) 100%
+  );
+}
+
+/* ─── Card Body ─── */
+.cardBody {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1.6rem 1.4rem;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.count {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent, #E8A020);
+  margin-bottom: 0.25rem;
+}
+
+.cardLabel {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.2rem, 2vw, 1.6rem);
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.1;
+}
+
+.cardSub {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.65);
+  font-weight: 300;
+}
+
+.arrow {
+  margin-top: 0.6rem;
+  font-size: 1.1rem;
+  color: var(--accent, #E8A020);
+  display: inline-block;
+  transform: translateX(0);
+  transition: transform 0.35s cubic-bezier(0.16,1,0.3,1);
+}
+
+.card:hover .arrow { transform: translateX(6px); }
+
+/* ─── Drag hint ─── */
+.dragHint {
+  text-align: center;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--color-light-text);
+  letter-spacing: 0.1em;
+}
+
+@media (min-width: 900px) { .dragHint { display: none; } }
