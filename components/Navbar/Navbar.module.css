@@ -142,6 +142,28 @@
 
 .cartBtn:hover { color: var(--color-primary); transform: scale(1.1); }
 
+.cartWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Invisible bridge so mouse doesn't lose hover when moving to popup */
+.cartWrap::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 100%;
+  height: 20px;
+}
+
+.cartWrap:hover .miniCartPopup {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
 .miniCartPopup {
   position: absolute;
   top: calc(100% + 15px);
