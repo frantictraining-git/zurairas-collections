@@ -80,8 +80,16 @@ export default function CheckoutPage() {
               </p>
               
               {checkoutError && (
-                <div style={{ backgroundColor: '#fce8e8', color: '#c92a2a', padding: '1rem', borderRadius: '6px', marginBottom: '1rem', border: '1px solid #f8caca' }}>
-                  <strong>Error: </strong> {checkoutError}
+                <div className={styles.errorCard}>
+                  <svg className={styles.errorIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                  </svg>
+                  <div className={styles.errorContent}>
+                    <h4>Checkout Blocked</h4>
+                    <p>{checkoutError}</p>
+                  </div>
                 </div>
               )}
 
