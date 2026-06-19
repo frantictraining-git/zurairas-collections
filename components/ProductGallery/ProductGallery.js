@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import Image from 'next/image';
 import styles from './ProductGallery.module.css';
 
@@ -47,7 +48,7 @@ export default function ProductGallery({ images, altText }) {
       </div>
 
       {/* Lightbox Modal */}
-      {showLightbox && (
+      {showLightbox && typeof document !== 'undefined' && createPortal(
         <div 
           className={styles.lightboxOverlay} 
           onClick={() => setShowLightbox(false)}
@@ -62,7 +63,8 @@ export default function ProductGallery({ images, altText }) {
               sizes="90vw"
             />
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

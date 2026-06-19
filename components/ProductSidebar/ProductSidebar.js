@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import styles from './ProductSidebar.module.css';
 
 export default function ProductSidebar({ product }) {
@@ -92,8 +93,8 @@ export default function ProductSidebar({ product }) {
         </div>
       </div>
 
-      {/* Size Guide Modal */}
-      {showSizeGuide && (
+      {/* Size Guide Modal / Slide-out Drawer */}
+      {showSizeGuide && typeof document !== 'undefined' && createPortal(
         <div className={styles.modalOverlay} onClick={() => setShowSizeGuide(false)}>
           <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
             <button className={styles.modalClose} onClick={() => setShowSizeGuide(false)}>✕</button>
@@ -116,7 +117,8 @@ export default function ProductSidebar({ product }) {
             </table>
             <p style={{ marginTop: '1rem', fontSize: '0.85rem', color: '#666' }}>Measurements are approximate. Please allow 1-2cm difference due to manual measurement.</p>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
