@@ -39,13 +39,18 @@ export async function POST(req) {
         throw new Error(`We're sorry! "${item.title}" in size ${item.size} just sold out.`);
       }
 
+      // Stripe requires absolute URLs for images
+      const absoluteImage = item.images && item.images.length > 0
+        ? `${process.env.NEXT_PUBLIC_SITE_URL}${item.images[0]}`
+        : undefined;
+
       // Add to Stripe Line Items
       line_items.push({
         price_data: {
           currency: 'cad',
           product_data: {
             name: `${item.title} - Size: ${item.size}`,
-            images: item.images && item.images.length > 0 ? [item.images[0]] : [],
+            images: absoluteImage ? [absoluteImage] : [],
           },
           unit_amount: Math.round(item.price * 100), // Stripe expects cents
         },
