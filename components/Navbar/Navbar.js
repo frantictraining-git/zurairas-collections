@@ -14,7 +14,7 @@ const navLinks = [
 export default function Navbar() {
   const [scrolled, setScrolled]   = useState(false);
   const [menuOpen, setMenuOpen]   = useState(false);
-  const { cartCount, cartItems, cartTotal, setIsCartOpen } = useCart();
+  const { cartCount, cartItems, cartTotal, setIsCartOpen, removeFromCart } = useCart();
   const navRef                    = useRef(null);
 
   useEffect(() => {
@@ -91,12 +91,28 @@ export default function Navbar() {
                 <div className={styles.miniCartItems}>
                   {cartItems.slice(0, 3).map((item, idx) => (
                     <div key={idx} className={styles.miniCartItem}>
-                      <img src={item.images[0]} alt={item.title} className={styles.miniCartImg} />
+                      <div className={styles.miniCartImgWrap}>
+                        <img src={item.images[0]} alt={item.title} className={styles.miniCartImg} />
+                      </div>
                       <div className={styles.miniCartInfo}>
-                        <p className={styles.mcDesigner}>{item.designer || "ZURAIRA'S COLLECTIONS"}</p>
+                        <div className={styles.mcTitleRow}>
+                          <p className={styles.mcDesigner}>{item.designer || "ZURAIRA'S COLLECTIONS"}</p>
+                          <button 
+                            className={styles.mcRemoveBtn} 
+                            onClick={(e) => { e.stopPropagation(); removeFromCart(item.id, item.size); }}
+                            aria-label="Remove item"
+                          >
+                            ✕
+                          </button>
+                        </div>
                         <p className={styles.mcName}>{item.title}</p>
-                        <p className={styles.mcPrice}>CAD {item.price}</p>
-                        <p className={styles.mcSizeQty}>Size: {item.size} &nbsp;|&nbsp; Qty: {item.quantity}</p>
+                        <p className={styles.mcColor}>Color: {item.color || 'Default'}</p>
+                        <p className={styles.mcPrice}>${item.price.toFixed(2)}</p>
+                        <div className={styles.mcSizeRow}>
+                          <span>Size: {item.size}</span>
+                          <span>Qty: {item.quantity}</span>
+                        </div>
+                        {item.quantity === 1 && <p className={styles.mcAlert}>Only 1 Left!</p>}
                       </div>
                     </div>
                   ))}
@@ -107,11 +123,13 @@ export default function Navbar() {
                 <div className={styles.miniCartFooter}>
                   <div className={styles.mcSubtotal}>
                     <span>Order Subtotal</span>
-                    <span>CAD {cartTotal.toFixed(2)}</span>
+                    <span>${cartTotal.toFixed(2)}</span>
                   </div>
                   <div className={styles.mcEst}>
-                    <span>Est. Pay Today</span>
-                    <span>CAD {cartTotal.toFixed(2)}</span>
+                    <span className={styles.mcEstLabel}>Est. Pay Today 
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                    </span>
+                    <span>${cartTotal.toFixed(2)}</span>
                   </div>
                   <button 
                     className={styles.mcCheckoutBtn}
