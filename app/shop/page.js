@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Navbar from '@/components/Navbar/Navbar';
 import Footer from '@/components/Footer/Footer';
 import FilterSidebar from '@/components/FilterSidebar/FilterSidebar';
@@ -34,15 +35,21 @@ function PaginationControls({ totalPages, currentPage, setCurrentPage }) {
   );
 }
 
-export default function ShopPage() {
-  const [currentCategory, setCategory] = useState('All');
+function ShopContent() {
+  const searchParams = useSearchParams();
+  // Read the ?category= param from the URL (e.g. /shop?category=Jewellery)
+  const urlCategory = searchParams.get('category');
+  const initialCategory = urlCategory
+    ? products.find(p => p.category.toLowerCase() === urlCategory.toLowerCase())?.category || 'All'
+    : 'All';
+
+  const [currentCategory, setCategory] = useState(initialCategory);
   const [currentColor, setColor] = useState('All');
   const [currentPage, setCurrentPage] = useState(1);
   const [isMobileFilterOpen, setMobileFilterOpen] = useState(false);
 
   const ITEMS_PER_PAGE = 4;
 
-  // Derive categories and colors from products
   const categories = useMemo(() => {
     const cats = new Set(products.map(p => p.category));
     return Array.from(cats);
@@ -53,72 +60,68 @@ export default function ShopPage() {
     return Array.from(cols);
   }, []);
 
-  // Filter products
   const filteredProducts = useMemo(() => {
     let filtered = products;
-    
-    if (currentCategory !== 'All') {
-      filtered = filtered.filter(p => p.category === currentCategory);
-    }
-    
-    if (currentColor !== 'All') {
-      filtered = filtered.filter(p => p.color === currentColor);
-    }
-    
+    if (currentCategory !== 'All') filtered = filtered.filter(p => p.category === currentCategory);
+    if (currentColor !== 'All') filtered = filtered.filter(p => p.color === currentColor);
     return filtered;
   }, [currentCategory, currentColor]);
 
-  // Reset to page 1 when filters change
-  useMemo(() => {
-    setCurrentPage(1);
-  }, [currentCategory, currentColor]);
+  useMemo(() => { setCurrentPage(1); }, [currentCategory, currentColor]);
 
-  // Pagination logic
   const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const paginatedProducts = filteredProducts.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
   return (
+    <main className={styles.shopContainer}>
+      <div className={styles.shopHeader}>
+        <h1>The Resort Collection</h1>
+        <p className={styles.count}>{filteredProducts.length} Items</p>
+        <button 
+          className={styles.mobileFilterBtn}
+          onClick={() => setMobileFilterOpen(true)}
+        >
+          Filter & Sort
+        </button>
+      </div>
+
+      <div className={styles.shopLayout}>
+        <div className={styles.sidebarCol}>
+          <FilterSidebar 
+            categories={categories}
+            currentCategory={currentCategory}
+            setCategory={setCategory}
+            colors={colors}
+            currentColor={currentColor}
+            setColor={setColor}
+            isMobileOpen={isMobileFilterOpen}
+            setMobileOpen={setMobileFilterOpen}
+          />
+        </div>
+        <div className={styles.gridCol}>
+          <div className={styles.topPagination}>
+            <PaginationControls totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} />
+          </div>
+
+          <ShopGrid products={paginatedProducts} />
+          
+          <div className={styles.bottomPagination}>
+            <PaginationControls totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} />
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+}
+
+export default function ShopPage() {
+  return (
     <>
       <Navbar />
-      <main className={styles.shopContainer}>
-        <div className={styles.shopHeader}>
-          <h1>The Resort Collection</h1>
-          <p className={styles.count}>{filteredProducts.length} Items</p>
-          <button 
-            className={styles.mobileFilterBtn}
-            onClick={() => setMobileFilterOpen(true)}
-          >
-            Filter & Sort
-          </button>
-        </div>
-
-        <div className={styles.shopLayout}>
-          <div className={styles.sidebarCol}>
-            <FilterSidebar 
-              categories={categories}
-              currentCategory={currentCategory}
-              setCategory={setCategory}
-              colors={colors}
-              currentColor={currentColor}
-              setColor={setColor}
-              isMobileOpen={isMobileFilterOpen}
-              setMobileOpen={setMobileFilterOpen}
-            />
-          </div>
-          <div className={styles.gridCol}>
-            <div className={styles.topPagination}>
-              <PaginationControls totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} />
-            </div>
-
-            <ShopGrid products={paginatedProducts} />
-            
-            <div className={styles.bottomPagination}>
-              <PaginationControls />
-            </div>
-          </div>
-        </div>
-      </main>
+      <Suspense fallback={<div style={{ padding: '8rem', textAlign: 'center' }}>Loading collection...</div>}>
+        <ShopContent />
+      </Suspense>
       <Footer />
     </>
   );
