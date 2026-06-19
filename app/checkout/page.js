@@ -115,20 +115,16 @@ export default function CheckoutPage() {
                         : 'A Piece Has Just Been Claimed'}
                     </h4>
                     <p>{checkoutError}</p>
-                    {availableItems.length > 0 && (
-                      <button
-                        onClick={proceedWithRemaining}
-                        className={styles.proceedRemainingBtn}
-                      >
-                        Proceed with {availableItems.length} remaining piece{availableItems.length > 1 ? 's' : ''} →
-                      </button>
-                    )}
                   </div>
                 </div>
               )}
 
               <button
-                onClick={() => handleStripeCheckout(cartItems)}
+                onClick={() =>
+                  soldOutItems.length > 0
+                    ? proceedWithRemaining()
+                    : handleStripeCheckout(cartItems)
+                }
                 disabled={isLoading || availableItems.length === 0}
                 className={styles.payBtn}
               >
@@ -136,7 +132,9 @@ export default function CheckoutPage() {
                   ? 'Verifying Inventory...'
                   : availableItems.length === 0
                     ? 'No Items Available'
-                    : `Proceed to Secure Checkout (CAD ${finalTotal.toFixed(2)})`}
+                    : soldOutItems.length > 0
+                      ? `Proceed with ${availableItems.length} Remaining Piece${availableItems.length > 1 ? 's' : ''} (CAD ${finalTotal.toFixed(2)})`
+                      : `Proceed to Secure Checkout (CAD ${finalTotal.toFixed(2)})`}
               </button>
             </div>
 
