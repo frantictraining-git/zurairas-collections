@@ -52,9 +52,9 @@ export default function ProductGallery({ images, altText }) {
           className={styles.lightboxOverlay} 
           onClick={() => setShowLightbox(false)}
         >
-          <div className={styles.lightboxContent} onClick={e => e.stopPropagation()}>
+          <div className={styles.lightboxContent}>
             <button className={styles.lightboxClose} onClick={() => setShowLightbox(false)}>✕</button>
-            <div className={styles.lightboxImgWrap}>
+            <div className={styles.lightboxImgWrap} onClick={e => e.stopPropagation()}>
               <Image
                 src={images[activeIndex]}
                 alt={`${altText} - enlarged view`}
