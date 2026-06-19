@@ -9,7 +9,7 @@
 .mainImgWrap {
   position: relative;
   width: 100%;
-  max-width: 500px;
+  max-width: 380px;
   margin: 0 auto;
   aspect-ratio: 3 / 4; /* Standard tall fashion crop */
   background-color: #f8f8f8;
