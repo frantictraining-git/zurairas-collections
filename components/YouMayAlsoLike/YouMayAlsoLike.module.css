@@ -17,6 +17,8 @@
 .carouselWrap {
   position: relative;
   width: 100%;
+  max-width: 1500px;
+  margin: 0 auto;
   display: flex;
   align-items: center;
 }
@@ -57,7 +59,9 @@
   gap: 1.5rem;
   overflow-x: auto;
   scroll-behavior: smooth;
-  padding: 1rem 3rem; /* padding to make room for arrows */
+  padding: 1rem 4rem; /* padding to make room for arrows */
+  width: 100%;
+  justify-content: center;
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
