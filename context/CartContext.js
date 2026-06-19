@@ -62,7 +62,7 @@ export function CartProvider({ children }) {
         setCartItems([]); // Clear cart
         setCartExpiresAt(null);
         localStorage.removeItem('zuraira_cart_expiry');
-        alert("Your 10-minute reservation has expired and your cart has been cleared.");
+        alert("Your 5-minute reservation has expired and your cart has been cleared.");
       } else {
         const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((distance % (1000 * 60)) / 1000);
@@ -96,8 +96,8 @@ export function CartProvider({ children }) {
           throw new Error("This item is currently reserved in another customer's cart.");
         }
 
-        // Lock for 10 minutes
-        const newExpiry = now + 10 * 60 * 1000;
+        // Lock for 5 minutes
+        const newExpiry = now + 5 * 60 * 1000;
         transaction.update(productRef, {
           reservedUntil: newExpiry,
           reservedBy: sessionId
