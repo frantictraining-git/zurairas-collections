@@ -25,7 +25,7 @@ const categories = [
     id: 'jewellery',
     label: 'Jewellery',
     sub: 'Handmade & Artisan',
-    img: '/images/483610494_1101778551964431_3889310886213084434_n.jpg',
+    img: '/images/483610494_1101778551964431_3889330886213084434_n.jpg',
     count: '40+ pieces',
     accent: '#E8A020',
   },
