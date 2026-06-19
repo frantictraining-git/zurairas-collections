@@ -14,7 +14,7 @@ const navLinks = [
 export default function Navbar() {
   const [scrolled, setScrolled]   = useState(false);
   const [menuOpen, setMenuOpen]   = useState(false);
-  const { cartCount, setIsCartOpen } = useCart();
+  const { cartCount, cartItems, cartTotal, setIsCartOpen } = useCart();
   const navRef                    = useRef(null);
 
   useEffect(() => {
@@ -67,19 +67,62 @@ export default function Navbar() {
             <span>Shop Now</span>
           </a>
 
-          <button
-            className={styles.cartBtn}
-            aria-label={`Shopping cart, ${cartCount} items`}
-            id="nav-cart-btn"
-            onClick={() => setIsCartOpen(true)}
-          >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
-              <line x1="3" y1="6" x2="21" y2="6"/>
-              <path d="M16 10a4 4 0 01-8 0"/>
-            </svg>
-            {cartCount > 0 && <span className={styles.badge}>{cartCount}</span>}
-          </button>
+          <div className={styles.cartWrap}>
+            <button
+              className={styles.cartBtn}
+              aria-label={`Shopping cart, ${cartCount} items`}
+              id="nav-cart-btn"
+              onClick={() => setIsCartOpen(true)}
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+                <line x1="3" y1="6" x2="21" y2="6"/>
+                <path d="M16 10a4 4 0 01-8 0"/>
+              </svg>
+              {cartCount > 0 && <span className={styles.badge}>{cartCount}</span>}
+            </button>
+
+            {/* Mini Cart Popup (Hover) */}
+            {cartItems.length > 0 && (
+              <div className={styles.miniCartPopup}>
+                <div className={styles.miniCartHeader}>
+                  <h4>Available Now</h4>
+                </div>
+                <div className={styles.miniCartItems}>
+                  {cartItems.slice(0, 3).map((item, idx) => (
+                    <div key={idx} className={styles.miniCartItem}>
+                      <img src={item.images[0]} alt={item.title} className={styles.miniCartImg} />
+                      <div className={styles.miniCartInfo}>
+                        <p className={styles.mcDesigner}>{item.designer || "ZURAIRA'S COLLECTIONS"}</p>
+                        <p className={styles.mcName}>{item.title}</p>
+                        <p className={styles.mcPrice}>CAD {item.price}</p>
+                        <p className={styles.mcSizeQty}>Size: {item.size} &nbsp;|&nbsp; Qty: {item.quantity}</p>
+                      </div>
+                    </div>
+                  ))}
+                  {cartItems.length > 3 && (
+                    <p className={styles.mcMore}>+ {cartItems.length - 3} more items...</p>
+                  )}
+                </div>
+                <div className={styles.miniCartFooter}>
+                  <div className={styles.mcSubtotal}>
+                    <span>Order Subtotal</span>
+                    <span>CAD {cartTotal.toFixed(2)}</span>
+                  </div>
+                  <div className={styles.mcEst}>
+                    <span>Est. Pay Today</span>
+                    <span>CAD {cartTotal.toFixed(2)}</span>
+                  </div>
+                  <button 
+                    className={styles.mcCheckoutBtn}
+                    onClick={() => setIsCartOpen(true)}
+                  >
+                    Go To My Shopping Bag
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
 
           {/* Hamburger */}
           <button
