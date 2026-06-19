@@ -2,6 +2,7 @@ import './globals.css';
 import './themes.css';
 import { CartProvider } from '@/context/CartContext';
 import CartDrawer from '@/components/CartDrawer/CartDrawer';
+import AuthProvider from '@/components/AuthProvider';
 import { Playfair_Display, Inter } from 'next/font/google';
 
 const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-playfair' });
@@ -28,10 +29,12 @@ export default function RootLayout({ children }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body className={`${playfair.variable} ${inter.variable}`}>
-        <CartProvider>
-          {children}
-          <CartDrawer />
-        </CartProvider>
+        <AuthProvider>
+          <CartProvider>
+            {children}
+            <CartDrawer />
+          </CartProvider>
+        </AuthProvider>
       </body>
     </html>
   );

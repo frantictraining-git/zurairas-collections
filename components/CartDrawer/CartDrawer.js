@@ -8,7 +8,7 @@ import { createPortal } from 'react-dom';
 import styles from './CartDrawer.module.css';
 
 export default function CartDrawer() {
-  const { isCartOpen, setIsCartOpen, cartItems, updateQuantity, removeFromCart, cartTotal, timeLeft } = useCart();
+  const { isCartOpen, setIsCartOpen, cartItems, updateQuantity, removeFromCart, cartTotal } = useCart();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -31,13 +31,6 @@ export default function CartDrawer() {
           <h2>Your Bag</h2>
           <button className={styles.closeBtn} onClick={() => setIsCartOpen(false)}>✕</button>
         </div>
-
-        {timeLeft && cartItems.length > 0 && (
-          <div className={styles.timerBanner}>
-            <span className={styles.timerIcon}>⏱</span>
-            <p>Due to high demand, your items are reserved for <strong>{timeLeft}</strong></p>
-          </div>
-        )}
 
         <div className={styles.body}>
           {cartItems.length === 0 ? (
