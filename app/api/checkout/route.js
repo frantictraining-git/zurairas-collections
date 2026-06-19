@@ -1,80 +1,84 @@
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
+import mongoose from 'mongoose';
+import dbConnect from '@/lib/mongodb';
+import Product from '@/models/Product';
 
-// Initialize Stripe with the secret key from environment variables
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2023-10-16', // Use the latest stable version
-});
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 export async function POST(req) {
+  let dbSession = null;
   try {
-    const body = await req.json();
-    const { items } = body;
+    const { cartItems } = await req.json();
 
-    if (!items || items.length === 0) {
-      return NextResponse.json({ error: 'Cart is empty' }, { status: 400 });
+    if (!cartItems || cartItems.length === 0) {
+      return NextResponse.json({ message: "Cart is empty" }, { status: 400 });
     }
 
-    // Format the items for Stripe Checkout
-    const line_items = items.map((item) => ({
-      price_data: {
-        currency: 'cad', // Standardize to CAD for Canadian store
-        product_data: {
-          name: item.title,
-          images: item.images && item.images.length > 0 ? [
-            // Stripe requires absolute URLs for images, so in production we'd need full URLs.
-            // For development with local images, we just omit them or use a placeholder if they are relative.
-            item.images[0].startsWith('http') ? item.images[0] : undefined
-          ].filter(Boolean) : [],
-          description: `Size: ${item.size} | Color: ${item.color || 'Default'}`,
-        },
-        unit_amount: Math.round(item.price * 100), // Stripe expects amounts in cents
-      },
-      quantity: item.quantity,
-    }));
+    await dbConnect();
+    
+    // Start a MongoDB Transaction to ensure atomic inventory locking
+    dbSession = await mongoose.startSession();
+    dbSession.startTransaction();
 
-    // Create the Checkout Session
-    // We add specific Canadian payment methods to allowed_payment_types if desired,
-    // but by default 'card' accepts major credit cards, Apple Pay, and Google Pay automatically.
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'], // Add 'acss_debit' for Pre-Authorized Debits if configured in Stripe dashboard
+    const line_items = [];
+
+    for (const item of cartItems) {
+      const sizeKey = `inventory.${item.size}`;
+      
+      // Optimistic Concurrency Control Check: 
+      // Atomically decrement stock ONLY IF stock is greater than 0
+      const updatedProduct = await Product.findOneAndUpdate(
+        { id: item.id, [sizeKey]: { $gt: 0 } },
+        { $inc: { [sizeKey]: -1 } },
+        { new: true, session: dbSession }
+      );
+
+      // If updatedProduct is null, it means someone else bought the last one!
+      if (!updatedProduct) {
+        throw new Error(`We're sorry! "${item.title}" in size ${item.size} just sold out.`);
+      }
+
+      // Add to Stripe Line Items
+      line_items.push({
+        price_data: {
+          currency: 'cad',
+          product_data: {
+            name: `${item.title} - Size: ${item.size}`,
+            images: item.images && item.images.length > 0 ? [item.images[0]] : [],
+          },
+          unit_amount: Math.round(item.price * 100), // Stripe expects cents
+        },
+        quantity: item.quantity,
+      });
+    }
+
+    // Generate Secure Stripe Payment Session
+    const checkoutSession = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
       line_items,
       mode: 'payment',
-      shipping_address_collection: {
-        allowed_countries: ['CA', 'US', 'GB'], // Limit shipping to specific countries
-      },
-      shipping_options: [
-        {
-          shipping_rate_data: {
-            type: 'fixed_amount',
-            fixed_amount: {
-              amount: 1500, // $15.00 CAD
-              currency: 'cad',
-            },
-            display_name: 'Standard Shipping',
-            delivery_estimate: {
-              minimum: {
-                unit: 'business_day',
-                value: 3,
-              },
-              maximum: {
-                unit: 'business_day',
-                value: 7,
-              },
-            },
-          },
-        },
-      ],
-      success_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/checkout`,
+      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/cart`,
+      // Set the session to expire in 30 minutes (minimum allowed by Stripe)
+      // This holds the inventory. If abandoned, a webhook would restore the inventory.
+      expires_at: Math.floor(Date.now() / 1000) + (30 * 60),
     });
 
-    return NextResponse.json({ url: session.url });
+    // Commit the database transaction since all items were in stock
+    await dbSession.commitTransaction();
+    dbSession.endSession();
+
+    return NextResponse.json({ id: checkoutSession.id, url: checkoutSession.url });
+
   } catch (error) {
-    console.error('Stripe Checkout Error:', error);
-    return NextResponse.json(
-      { error: 'Error creating checkout session. Please ensure Stripe keys are configured.' },
-      { status: 500 }
-    );
+    // If any item was out of stock, rollback the transaction so we don't accidentally
+    // deduct inventory for the other items in their cart!
+    if (dbSession) {
+      await dbSession.abortTransaction();
+      dbSession.endSession();
+    }
+    console.error("Checkout error:", error);
+    return NextResponse.json({ message: error.message || "An error occurred during checkout" }, { status: 400 });
   }
 }

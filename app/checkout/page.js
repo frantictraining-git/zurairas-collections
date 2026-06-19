@@ -14,6 +14,38 @@ export default function CheckoutPage() {
   const shipping = cartTotal > 0 ? 15 : 0;
   const finalTotal = cartTotal + taxes + shipping;
 
+  const [isLoading, setIsLoading] = useState(false);
+  const [checkoutError, setCheckoutError] = useState('');
+
+  const handleStripeCheckout = async () => {
+    setIsLoading(true);
+    setCheckoutError('');
+
+    try {
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cartItems })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        // This hits if the item sold out (OCC triggers)
+        setCheckoutError(data.message || 'Something went wrong');
+        setIsLoading(false);
+        return;
+      }
+
+      // Redirect to Stripe Secure Checkout
+      window.location.href = data.url;
+
+    } catch (err) {
+      setCheckoutError('Failed to initiate checkout');
+      setIsLoading(false);
+    }
+  };
+
   return (
     <>
       <Navbar />
@@ -40,56 +72,25 @@ export default function CheckoutPage() {
                 </div>
               </div>
 
-              <h2 className={styles.sectionTitle}>Contact Information</h2>
-              <input type="email" placeholder="Email Address" className={styles.input} />
-
-              <h2 className={styles.sectionTitle}>Shipping Address</h2>
-              <div className={styles.row}>
-                <input type="text" placeholder="First Name" className={styles.input} />
-                <input type="text" placeholder="Last Name" className={styles.input} />
-              </div>
-              <input type="text" placeholder="Address" className={styles.input} />
-              <input type="text" placeholder="Apartment, suite, etc. (optional)" className={styles.input} />
-              <div className={styles.row}>
-                <input type="text" placeholder="City" className={styles.input} />
-                <input type="text" placeholder="Postal Code" className={styles.input} />
-              </div>
-
-              <h2 className={styles.sectionTitle}>Payment</h2>
-              <p className={styles.paymentNote}>All transactions are secure and encrypted.</p>
+              <h2 className={styles.sectionTitle}>Secure Payment</h2>
+              <p className={styles.paymentNote}>
+                You will be redirected to our secure Stripe checkout portal to complete your payment.
+                Our system will automatically verify inventory availability before charging your card.
+              </p>
               
-              <div className={styles.paymentMethods}>
-                <label className={styles.paymentMethod}>
-                  <input type="radio" name="payment" defaultChecked />
-                  <span>Credit Card</span>
-                  <div className={styles.paymentIcons}>
-                    <span className={styles.ccIcon}>Visa</span>
-                    <span className={styles.ccIcon}>MC</span>
-                    <span className={styles.ccIcon}>Amex</span>
-                  </div>
-                </label>
-                
-                <div className={styles.creditCardForm}>
-                  <input type="text" placeholder="Card Number" className={styles.input} />
-                  <div className={styles.row}>
-                    <input type="text" placeholder="Expiration Date (MM/YY)" className={styles.input} />
-                    <input type="text" placeholder="Security Code (CVV)" className={styles.input} />
-                  </div>
-                  <input type="text" placeholder="Name on Card" className={styles.input} />
+              {checkoutError && (
+                <div style={{ backgroundColor: '#fce8e8', color: '#c92a2a', padding: '1rem', borderRadius: '6px', marginBottom: '1rem', border: '1px solid #f8caca' }}>
+                  <strong>Error: </strong> {checkoutError}
                 </div>
+              )}
 
-                <label className={styles.paymentMethod}>
-                  <input type="radio" name="payment" />
-                  <span>PayPal</span>
-                </label>
-
-                <label className={styles.paymentMethod}>
-                  <input type="radio" name="payment" />
-                  <span>Interac e-Transfer</span>
-                </label>
-              </div>
-
-              <button className={styles.payBtn}>Pay CAD {finalTotal.toFixed(2)}</button>
+              <button 
+                onClick={handleStripeCheckout} 
+                disabled={isLoading}
+                className={styles.payBtn}
+              >
+                {isLoading ? 'Verifying Inventory...' : `Proceed to Secure Checkout (CAD ${finalTotal.toFixed(2)})`}
+              </button>
             </div>
 
             {/* Right: Order Summary */}
