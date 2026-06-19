@@ -36,7 +36,7 @@ export async function POST(req) {
 
       // If updatedProduct is null, it means someone else bought the last one!
       if (!updatedProduct) {
-        throw new Error(`We're sorry! "${item.title}" in size ${item.size} just sold out.`);
+        throw new Error(`This piece has just found its home. The last "${item.title}" in size ${item.size} was claimed moments ago. We invite you to explore similar pieces from our collection.`);
       }
 
       // Stripe requires absolute URLs for images
