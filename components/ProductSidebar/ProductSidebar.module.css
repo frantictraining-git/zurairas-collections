@@ -144,42 +144,56 @@
   }
 }
 
-/* Modal Styles */
+/* Slide-Out Drawer (formerly Modal) */
 .modalOverlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   z-index: 9999;
-  padding: 1rem;
+  /* Instead of flex centering, it just covers the screen */
 }
 
 .modalContent {
-  background: #fff;
-  padding: 2.5rem;
-  max-width: 500px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100vh;
   width: 100%;
-  position: relative;
-  border-radius: 4px;
+  max-width: 450px;
+  background: #fff;
+  padding: 3rem 2rem;
+  box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+  animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  overflow-y: auto;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
 }
 
 .modalClose {
   position: absolute;
-  top: 1rem;
-  right: 1rem;
+  top: 1.5rem;
+  right: 1.5rem;
   background: none;
   border: none;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   cursor: pointer;
-  color: #666;
+  color: #000;
+  transition: transform 0.2s ease;
+}
+
+.modalClose:hover {
+  transform: scale(1.1);
 }
 
 .sizeTable {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 1rem;
+  margin-top: 2rem;
 }
 
 .sizeTable th, .sizeTable td {
