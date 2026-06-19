@@ -1,5 +1,4 @@
 import Navbar   from '@/components/Navbar/Navbar';
-import Hero      from '@/components/Hero/HeroNAP';
 import FeaturedSlider from '@/components/FeaturedSlider/FeaturedSlider';
 import BrandStory         from '@/components/BrandStory/BrandStory';
 import CategoryCarousel   from '@/components/CategoryCarousel/CategoryCarousel';
@@ -13,7 +12,6 @@ export default function Home() {
     <>
       <Navbar />
       <main>
-        <Hero />
         <FeaturedSlider />
         <BrandStory />
         <CategoryCarousel />
