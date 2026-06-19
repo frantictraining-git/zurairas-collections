@@ -1,16 +1,46 @@
 .gallery {
   display: flex;
   flex-direction: column;
-  gap: 4px; /* Tiny gap for that premium stark look, or 0 for seamless */
+  gap: 1rem;
   width: 100%;
+  padding: 2rem;
 }
 
-.imgWrap {
+.mainImgWrap {
   position: relative;
   width: 100%;
   aspect-ratio: 3 / 4; /* Standard tall fashion crop */
-  background-color: #f8f8f8; /* Soft placeholder background */
+  background-color: #f8f8f8;
   overflow: hidden;
+}
+
+.thumbnailGrid {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.thumbnailGrid::-webkit-scrollbar {
+  display: none;
+}
+
+.thumbWrap {
+  position: relative;
+  width: 80px;
+  height: 106px; /* Approx 3:4 ratio */
+  flex-shrink: 0;
+  border: 1px solid transparent;
+  cursor: pointer;
+  overflow: hidden;
+  padding: 0;
+  background: #f8f8f8;
+  transition: border-color 0.3s ease;
+}
+
+.thumbWrap.activeThumb {
+  border-color: #000;
 }
 
 .img {
@@ -18,23 +48,9 @@
   object-position: center;
 }
 
-/* On mobile, maybe we want a horizontal swipe carousel instead of a massive vertical stack? */
+/* Mobile responsive */
 @media (max-width: 900px) {
   .gallery {
-    flex-direction: row;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    gap: 0;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none; /* Firefox */
-  }
-  .gallery::-webkit-scrollbar {
-    display: none; /* Chrome/Safari */
-  }
-  .imgWrap {
-    flex: 0 0 100%;
-    scroll-snap-align: start;
-    height: 70vh; /* Responsive height */
-    aspect-ratio: auto;
+    padding: 0;
   }
 }
