@@ -10,19 +10,73 @@ import styles from './page.module.css';
 
 export default function ShopPage() {
   const [currentCategory, setCategory] = useState('All');
+  const [currentColor, setColor] = useState('All');
+  const [currentPage, setCurrentPage] = useState(1);
   const [isMobileFilterOpen, setMobileFilterOpen] = useState(false);
 
-  // Derive categories from products
+  const ITEMS_PER_PAGE = 4;
+
+  // Derive categories and colors from products
   const categories = useMemo(() => {
     const cats = new Set(products.map(p => p.category));
     return Array.from(cats);
   }, []);
 
+  const colors = useMemo(() => {
+    const cols = new Set(products.map(p => p.color).filter(Boolean));
+    return Array.from(cols);
+  }, []);
+
   // Filter products
   const filteredProducts = useMemo(() => {
-    if (currentCategory === 'All') return products;
-    return products.filter(p => p.category === currentCategory);
-  }, [currentCategory]);
+    let filtered = products;
+    
+    if (currentCategory !== 'All') {
+      filtered = filtered.filter(p => p.category === currentCategory);
+    }
+    
+    if (currentColor !== 'All') {
+      filtered = filtered.filter(p => p.color === currentColor);
+    }
+    
+    return filtered;
+  }, [currentCategory, currentColor]);
+
+  // Reset to page 1 when filters change
+  useMemo(() => {
+    setCurrentPage(1);
+  }, [currentCategory, currentColor]);
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const paginatedProducts = filteredProducts.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+  // Pagination Component
+  const PaginationControls = () => {
+    if (totalPages <= 1) return null;
+    return (
+      <div className={styles.pagination}>
+        <button 
+          className={styles.pageBtn} 
+          disabled={currentPage === 1}
+          onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+        >
+          Prev
+        </button>
+        <span className={styles.pageInfo}>
+          Page {currentPage} of {totalPages}
+        </span>
+        <button 
+          className={styles.pageBtn} 
+          disabled={currentPage === totalPages}
+          onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+        >
+          Next
+        </button>
+      </div>
+    );
+  };
 
   return (
     <>
@@ -45,19 +99,23 @@ export default function ShopPage() {
               categories={categories}
               currentCategory={currentCategory}
               setCategory={setCategory}
+              colors={colors}
+              currentColor={currentColor}
+              setColor={setColor}
               isMobileOpen={isMobileFilterOpen}
               setMobileOpen={setMobileFilterOpen}
             />
           </div>
           <div className={styles.gridCol}>
-            <ShopGrid products={filteredProducts} />
+            <div className={styles.topPagination}>
+              <PaginationControls />
+            </div>
+
+            <ShopGrid products={paginatedProducts} />
             
-            {/* Load More Button */}
-            {filteredProducts.length > 0 && (
-              <div className={styles.loadMoreWrap}>
-                <button className={styles.loadMoreBtn}>Load More</button>
-              </div>
-            )}
+            <div className={styles.bottomPagination}>
+              <PaginationControls />
+            </div>
           </div>
         </div>
       </main>
