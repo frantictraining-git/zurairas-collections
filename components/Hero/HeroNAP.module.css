@@ -29,12 +29,11 @@
 .bgImg {
   object-fit: cover;
   object-position: center;
-  filter: grayscale(100%) contrast(1.1); /* NAP often uses high contrast, black and white or muted color */
-  transition: filter 0.5s ease;
+  transition: transform 0.5s ease;
 }
 
 .bgImg:hover {
-  filter: grayscale(0%) contrast(1.05);
+  transform: scale(1.02);
 }
 
 .textCol {

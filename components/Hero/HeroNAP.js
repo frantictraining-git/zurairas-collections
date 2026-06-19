@@ -24,8 +24,8 @@ export default function HeroNAP() {
         <div className={styles.imageCol}>
           <div className={styles.imgWrap}>
             <Image
-              src="https://images.unsplash.com/photo-1550614000-4b95dd244e47?w=1600&q=85&fit=crop"
-              alt="Editorial fashion — Net-a-Porter inspired"
+              src="/images/482347239_1101778775297742_5147514746175651940_n.jpg"
+              alt="Earthy tone fabrics south asian female wear"
               fill
               priority
               fetchPriority="high"
