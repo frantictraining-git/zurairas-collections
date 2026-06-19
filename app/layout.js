@@ -1,5 +1,11 @@
 import './globals.css';
 import './themes.css';
+import { CartProvider } from '@/context/CartContext';
+import CartDrawer from '@/components/CartDrawer/CartDrawer';
+import { Playfair_Display, Inter } from 'next/font/google';
+
+const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-playfair' });
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
 export const metadata = {
   title: "Zuraira's Collections | Handcrafted Clothing & Ornaments — Toronto, Canada",
@@ -21,8 +27,11 @@ export default function RootLayout({ children }) {
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
-      <body>
-        {children}
+      <body className={`${playfair.variable} ${inter.variable}`}>
+        <CartProvider>
+          {children}
+          <CartDrawer />
+        </CartProvider>
       </body>
     </html>
   );

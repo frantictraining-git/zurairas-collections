@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { useCart } from '@/context/CartContext';
 import styles from './Navbar.module.css';
 
 const navLinks = [
@@ -13,7 +14,7 @@ const navLinks = [
 export default function Navbar() {
   const [scrolled, setScrolled]   = useState(false);
   const [menuOpen, setMenuOpen]   = useState(false);
-  const [cartCount]               = useState(0);
+  const { cartCount, setIsCartOpen } = useCart();
   const navRef                    = useRef(null);
 
   useEffect(() => {
@@ -70,6 +71,7 @@ export default function Navbar() {
             className={styles.cartBtn}
             aria-label={`Shopping cart, ${cartCount} items`}
             id="nav-cart-btn"
+            onClick={() => setIsCartOpen(true)}
           >
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
               <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>

@@ -2,12 +2,16 @@
 
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import { useCart } from '@/context/CartContext';
 import styles from './ProductSidebar.module.css';
 
 export default function ProductSidebar({ product }) {
   const [selectedSize, setSelectedSize] = useState(null);
   const [openAccordion, setOpenAccordion] = useState('story'); // Default open
   const [showSizeGuide, setShowSizeGuide] = useState(false);
+  const [sizeError, setSizeError] = useState(false);
+  
+  const { addToCart } = useCart();
 
   const sizes = ['S', 'M', 'L', 'XL'];
 
@@ -32,17 +36,30 @@ export default function ProductSidebar({ product }) {
           {sizes.map(size => (
             <button 
               key={size}
-              className={`${styles.sizeBtn} ${selectedSize === size ? styles.selected : ''}`}
-              onClick={() => setSelectedSize(size)}
+              className={`${styles.sizeBtn} ${selectedSize === size ? styles.selected : ''} ${sizeError && !selectedSize ? styles.errorShake : ''}`}
+              onClick={() => {
+                setSelectedSize(size);
+                setSizeError(false);
+              }}
             >
               {size}
             </button>
           ))}
         </div>
+        {sizeError && <p style={{ color: '#d32f2f', fontSize: '0.8rem', marginTop: '0.5rem', fontFamily: 'Inter' }}>Please select a size first.</p>}
       </div>
 
       {/* Add to Bag */}
-      <button className={styles.addBtn}>
+      <button 
+        className={styles.addBtn}
+        onClick={() => {
+          if (!selectedSize) {
+            setSizeError(true);
+            return;
+          }
+          addToCart(product, selectedSize);
+        }}
+      >
         Add To Bag
       </button>
 

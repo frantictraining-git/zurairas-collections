@@ -208,3 +208,15 @@
   background: #f8f8f8;
   font-weight: 500;
 }
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.errorShake {
+  animation: shake 0.3s ease-in-out;
+  border-color: #d32f2f !important;
+  color: #d32f2f !important;
+}

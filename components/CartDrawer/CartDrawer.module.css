@@ -1,0 +1,234 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 10000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: 100%;
+  max-width: 450px;
+  background: #fff;
+  z-index: 10001;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+}
+
+.drawer.open {
+  transform: translateX(0);
+}
+
+.header {
+  padding: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.closeBtn:hover {
+  transform: scale(1.1);
+}
+
+.body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2rem;
+}
+
+.emptyState {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  font-family: 'Inter', sans-serif;
+  color: #666;
+}
+
+.continueBtn {
+  padding: 1rem 2rem;
+  background: #000;
+  color: #fff;
+  border: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.continueBtn:hover {
+  background: #333;
+}
+
+.itemsList {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.cartItem {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.itemImg {
+  position: relative;
+  width: 90px;
+  height: 120px;
+  background: #f8f8f8;
+  flex-shrink: 0;
+}
+
+.img {
+  object-fit: cover;
+}
+
+.itemInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.itemTop {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.itemTop h4 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  font-weight: 400;
+  margin-bottom: 0.3rem;
+}
+
+.itemSize {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.itemPrice {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.itemBottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.qtyControl {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border: 1px solid #eaeaea;
+  padding: 0.3rem 0.5rem;
+}
+
+.qtyControl button {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #666;
+  padding: 0 0.5rem;
+}
+
+.qtyControl span {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  min-width: 1rem;
+  text-align: center;
+}
+
+.removeBtn {
+  background: none;
+  border: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  text-decoration: underline;
+  color: #666;
+  cursor: pointer;
+}
+
+.footer {
+  padding: 2rem;
+  border-top: 1px solid #eaeaea;
+  background: #fdfaf5;
+}
+
+.subtotal {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Inter', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.taxesInfo {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  color: #666;
+  margin-bottom: 1.5rem;
+}
+
+.checkoutBtn {
+  display: block;
+  width: 100%;
+  padding: 1.2rem;
+  background: #000;
+  color: #fff;
+  text-align: center;
+  text-decoration: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  transition: background 0.3s;
+}
+
+.checkoutBtn:hover {
+  background: #333;
+}
