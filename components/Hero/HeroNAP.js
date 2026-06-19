@@ -38,7 +38,7 @@ export default function HeroNAP() {
         {/* Right Column: Text */}
         <div className={styles.textCol} ref={textRef}>
           <p className={`${styles.brand} ${styles.animItem}`}>
-            Zuraira's Collections
+            Zuraira&apos;s Collections
           </p>
 
           <h1 className={`${styles.headline} ${styles.animItem}`}>

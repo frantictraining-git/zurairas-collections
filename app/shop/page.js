@@ -8,6 +8,32 @@ import ShopGrid from '@/components/ShopGrid/ShopGrid';
 import { products } from '@/lib/data';
 import styles from './page.module.css';
 
+// Declared outside ShopPage to avoid re-creating component on every render
+function PaginationControls({ totalPages, currentPage, setCurrentPage }) {
+  if (totalPages <= 1) return null;
+  return (
+    <div className={styles.pagination}>
+      <button 
+        className={styles.pageBtn} 
+        disabled={currentPage === 1}
+        onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+      >
+        Prev
+      </button>
+      <span className={styles.pageInfo}>
+        Page {currentPage} of {totalPages}
+      </span>
+      <button 
+        className={styles.pageBtn} 
+        disabled={currentPage === totalPages}
+        onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+      >
+        Next
+      </button>
+    </div>
+  );
+}
+
 export default function ShopPage() {
   const [currentCategory, setCategory] = useState('All');
   const [currentColor, setColor] = useState('All');
@@ -52,32 +78,6 @@ export default function ShopPage() {
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const paginatedProducts = filteredProducts.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
-  // Pagination Component
-  const PaginationControls = () => {
-    if (totalPages <= 1) return null;
-    return (
-      <div className={styles.pagination}>
-        <button 
-          className={styles.pageBtn} 
-          disabled={currentPage === 1}
-          onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-        >
-          Prev
-        </button>
-        <span className={styles.pageInfo}>
-          Page {currentPage} of {totalPages}
-        </span>
-        <button 
-          className={styles.pageBtn} 
-          disabled={currentPage === totalPages}
-          onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-        >
-          Next
-        </button>
-      </div>
-    );
-  };
-
   return (
     <>
       <Navbar />
@@ -108,7 +108,7 @@ export default function ShopPage() {
           </div>
           <div className={styles.gridCol}>
             <div className={styles.topPagination}>
-              <PaginationControls />
+              <PaginationControls totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} />
             </div>
 
             <ShopGrid products={paginatedProducts} />

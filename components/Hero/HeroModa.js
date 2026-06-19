@@ -49,11 +49,11 @@ export default function HeroModa() {
       {/* Content Below/Overlapping */}
       <div className={styles.content} ref={textRef}>
         <p className={`${styles.tagline} ${styles.animItem}`}>
-          The Resort Collection
+          Zuraira&apos;s Collections
         </p>
 
         <h1 className={`${styles.headline} ${styles.animItem}`}>
-          WHAT'S NEW
+          WHAT&apos;S NEW
         </h1>
 
         <p className={`${styles.sub} ${styles.animItem}`}>

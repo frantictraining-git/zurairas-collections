@@ -12,7 +12,7 @@ export default function Footer() {
             
             {/* Left side: Newsletter */}
             <div>
-              <h3 className={styles.newsTitle}>Enjoy 10% off your next order on ZURAIRA'S COLLECTIONS</h3>
+              <h3 className={styles.newsTitle}>Enjoy 10% off your next order on ZURAIRA&apos;S COLLECTIONS</h3>
               <p className={styles.newsDesc}>
                 Claim your exclusive discount code when you subscribe to our brand content. <a href="#terms" style={{textDecoration: 'underline'}}>T&Cs</a> and exclusions apply.
               </p>
@@ -81,7 +81,7 @@ export default function Footer() {
             <div>
               <h4 className={styles.colTitle}>ABOUT US</h4>
               <ul className={styles.linkList}>
-                <li><a href="#">About ZURAIRA'S COLLECTIONS</a></li>
+                <li><a href="#">About ZURAIRA&apos;S COLLECTIONS</a></li>
                 <li><a href="#">People & Planet</a></li>
                 <li><a href="#">Sustainability Strategy</a></li>
                 <li><a href="#">Rewards</a></li>
@@ -119,7 +119,7 @@ export default function Footer() {
           </div>
 
           <div className={styles.brandLine}>
-            <h4 className={styles.brandName}>ZURAIRA'S COLLECTIONS</h4>
+            <h4 className={styles.brandName}>ZURAIRA&apos;S COLLECTIONS</h4>
             <p className={styles.brandDesc}>Shop the finest handcrafted South Asian luxury designs & be dressed for any occasion</p>
             <a href="#" className={styles.brandLink}>Visit ZURAIRASCOLLECTIONS.COM</a>
           </div>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useCart } from '@/context/CartContext';
+import Link from 'next/link';
 import styles from './Navbar.module.css';
 
 const navLinks = [
@@ -37,12 +38,12 @@ export default function Navbar() {
     >
       <div className={styles.inner}>
         {/* Logo */}
-        <a href="/" className={styles.logo} aria-label="Zuraira's Collections Home">
+        <Link href="/" className={styles.logo} aria-label="Zuraira&apos;s Collections Home">
           <span className={styles.logoZ}>Z</span>
           <span className={styles.logoText}>uraira&apos;s</span>
           <span className={styles.logoDot}> ✦ </span>
           <span className={styles.logoSub}>Collections</span>
-        </a>
+        </Link>
 
         {/* Desktop Nav */}
         <nav className={styles.desktopNav} aria-label="Main navigation">
