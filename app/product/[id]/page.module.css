@@ -1,0 +1,48 @@
+.pdpContainer {
+  display: flex;
+  min-height: 100vh;
+  margin-top: 80px; /* account for navbar */
+}
+
+.leftCol {
+  width: 60%;
+  border-right: 1px solid #eaeaea; /* subtle divider */
+}
+
+.rightCol {
+  width: 40%;
+  position: relative; /* for sticky to work, parent must have relative/static */
+}
+
+.stickyWrap {
+  position: sticky;
+  top: 80px; /* sticky below the navbar */
+  height: calc(100vh - 80px); /* full viewport minus navbar */
+  overflow-y: auto; /* scrollable if content exceeds height */
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+}
+
+.stickyWrap::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
+/* Mobile responsive */
+@media (max-width: 900px) {
+  .pdpContainer {
+    flex-direction: column;
+  }
+  .leftCol, .rightCol {
+    width: 100%;
+    border-right: none;
+  }
+  .stickyWrap {
+    position: static;
+    height: auto;
+    overflow-y: visible;
+    padding-bottom: 4rem; /* some breathing room at the bottom */
+  }
+}

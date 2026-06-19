@@ -1,0 +1,40 @@
+.gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 4px; /* Tiny gap for that premium stark look, or 0 for seamless */
+  width: 100%;
+}
+
+.imgWrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4; /* Standard tall fashion crop */
+  background-color: #f8f8f8; /* Soft placeholder background */
+  overflow: hidden;
+}
+
+.img {
+  object-fit: cover;
+  object-position: center;
+}
+
+/* On mobile, maybe we want a horizontal swipe carousel instead of a massive vertical stack? */
+@media (max-width: 900px) {
+  .gallery {
+    flex-direction: row;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 0;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+  }
+  .gallery::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+  }
+  .imgWrap {
+    flex: 0 0 100%;
+    scroll-snap-align: start;
+    height: 70vh; /* Responsive height */
+    aspect-ratio: auto;
+  }
+}
