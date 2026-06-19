@@ -120,7 +120,7 @@
 }
 
 .applePay { background: #000; }
-.paypalPay { background: #FFC439; color: #003087; }
+.paypalPay { background: #0079C1; color: #fff; }
 .googlePay { background: #fff; color: #000; border: 1px solid #ccc; }
 
 .divider {
