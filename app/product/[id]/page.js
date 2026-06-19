@@ -2,12 +2,16 @@ import Navbar from '@/components/Navbar/Navbar';
 import Footer from '@/components/Footer/Footer';
 import ProductGallery from '@/components/ProductGallery/ProductGallery';
 import ProductSidebar from '@/components/ProductSidebar/ProductSidebar';
+import YouMayAlsoLike from '@/components/YouMayAlsoLike/YouMayAlsoLike';
 import { products } from '@/lib/data';
 import styles from './page.module.css';
 
 export default function ProductPage({ params }) {
   // Find product by id, fallback to first product if not found
   const product = products.find(p => p.id === params.id) || products[0];
+
+  // Get recommendations (all other products, up to 6 items)
+  const recommendations = products.filter(p => p.id !== product.id).slice(0, 6);
 
   return (
     <>
@@ -25,6 +29,9 @@ export default function ProductPage({ params }) {
           </div>
         </div>
       </main>
+      
+      <YouMayAlsoLike products={recommendations} />
+      
       <Footer />
     </>
   );
