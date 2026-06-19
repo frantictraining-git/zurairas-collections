@@ -79,13 +79,121 @@
 
 .input {
   width: 100%;
-  padding: 1rem;
-  border: 1px solid #ddd;
+  padding: 0.9rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
   font-family: 'Inter', sans-serif;
   font-size: 0.9rem;
   margin-bottom: 1rem;
+}
+
+/* Express Checkout */
+.expressCheckout {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.expressCheckout p {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+.expressButtons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.expressBtn {
+  flex: 1;
+  padding: 0.8rem;
   border-radius: 4px;
-  transition: border-color 0.3s;
+  border: none;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  color: #fff;
+}
+
+.applePay { background: #000; }
+.paypalPay { background: #FFC439; color: #003087; }
+.googlePay { background: #fff; color: #000; border: 1px solid #ccc; }
+
+.divider {
+  position: relative;
+  text-align: center;
+  margin: 1rem 0;
+}
+
+.divider::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: #eaeaea;
+  z-index: 1;
+}
+
+.divider span {
+  position: relative;
+  z-index: 2;
+  background: #fff;
+  padding: 0 1rem;
+  font-size: 0.8rem;
+  color: #888;
+}
+
+/* Payment Methods */
+.paymentMethods {
+  border: 1px solid #eaeaea;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.paymentMethod {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-bottom: 1px solid #eaeaea;
+  background: #fdfdfd;
+  cursor: pointer;
+}
+
+.paymentMethod:last-child {
+  border-bottom: none;
+}
+
+.paymentMethod span {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  flex: 1;
+}
+
+.paymentIcons {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.ccIcon {
+  font-size: 0.6rem;
+  padding: 0.2rem 0.4rem;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  background: #fff;
+}
+
+.creditCardForm {
+  padding: 1.5rem;
+  background: #f9f9f9;
+  border-bottom: 1px solid #eaeaea;
 }
 
 .input:focus {

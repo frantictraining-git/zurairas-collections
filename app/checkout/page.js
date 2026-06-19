@@ -28,6 +28,18 @@ export default function CheckoutPage() {
           <div className={styles.checkoutLayout}>
             {/* Left: Forms */}
             <div className={styles.formCol}>
+              <div className={styles.expressCheckout}>
+                <p>Express Checkout</p>
+                <div className={styles.expressButtons}>
+                  <button className={`${styles.expressBtn} ${styles.applePay}`}>Apple Pay</button>
+                  <button className={`${styles.expressBtn} ${styles.paypalPay}`}>PayPal</button>
+                  <button className={`${styles.expressBtn} ${styles.googlePay}`}>Google Pay</button>
+                </div>
+                <div className={styles.divider}>
+                  <span>OR</span>
+                </div>
+              </div>
+
               <h2 className={styles.sectionTitle}>Contact Information</h2>
               <input type="email" placeholder="Email Address" className={styles.input} />
 
@@ -44,13 +56,38 @@ export default function CheckoutPage() {
               </div>
 
               <h2 className={styles.sectionTitle}>Payment</h2>
-              <p className={styles.paymentNote}>This is a secure 128-bit SSL encrypted payment.</p>
-              <input type="text" placeholder="Card Number" className={styles.input} />
-              <div className={styles.row}>
-                <input type="text" placeholder="Expiration Date (MM/YY)" className={styles.input} />
-                <input type="text" placeholder="Security Code (CVV)" className={styles.input} />
+              <p className={styles.paymentNote}>All transactions are secure and encrypted.</p>
+              
+              <div className={styles.paymentMethods}>
+                <label className={styles.paymentMethod}>
+                  <input type="radio" name="payment" defaultChecked />
+                  <span>Credit Card</span>
+                  <div className={styles.paymentIcons}>
+                    <span className={styles.ccIcon}>Visa</span>
+                    <span className={styles.ccIcon}>MC</span>
+                    <span className={styles.ccIcon}>Amex</span>
+                  </div>
+                </label>
+                
+                <div className={styles.creditCardForm}>
+                  <input type="text" placeholder="Card Number" className={styles.input} />
+                  <div className={styles.row}>
+                    <input type="text" placeholder="Expiration Date (MM/YY)" className={styles.input} />
+                    <input type="text" placeholder="Security Code (CVV)" className={styles.input} />
+                  </div>
+                  <input type="text" placeholder="Name on Card" className={styles.input} />
+                </div>
+
+                <label className={styles.paymentMethod}>
+                  <input type="radio" name="payment" />
+                  <span>PayPal</span>
+                </label>
+
+                <label className={styles.paymentMethod}>
+                  <input type="radio" name="payment" />
+                  <span>Interac e-Transfer</span>
+                </label>
               </div>
-              <input type="text" placeholder="Name on Card" className={styles.input} />
 
               <button className={styles.payBtn}>Pay CAD {finalTotal.toFixed(2)}</button>
             </div>
