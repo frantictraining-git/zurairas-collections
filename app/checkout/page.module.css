@@ -431,3 +431,58 @@
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* E-Transfer Option */
+.etransferOption {
+  background: #fff8f0;
+  border: 1px solid #e8d5b7;
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.etransferHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.6rem;
+}
+
+.etransferHeader h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  font-weight: 600;
+  font-style: italic;
+  color: #5c3d1e;
+  margin: 0;
+}
+
+.etransferBadge {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  background: #c4956a;
+  color: #fff;
+  padding: 0.2rem 0.5rem;
+  border-radius: 20px;
+}
+
+.etransferOption p {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  color: #7a5535;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.etransferOption a {
+  color: #c4956a;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.etransferOption a:hover {
+  text-decoration: underline;
+}

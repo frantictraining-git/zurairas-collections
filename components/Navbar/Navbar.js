@@ -9,7 +9,7 @@ const navLinks = [
   { label: 'Collections', href: '#categories' },
   { label: 'New Arrivals', href: '#arrivals' },
   { label: 'Our Story', href: '#story' },
-  { label: 'Contact', href: '#footer' },
+  { label: 'Contact', href: '/contact' },
 ];
 
 export default function Navbar() {

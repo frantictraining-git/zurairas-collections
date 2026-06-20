@@ -103,6 +103,25 @@ export default function CheckoutPage() {
                 Our system will automatically verify inventory availability before charging your card.
               </p>
 
+              {/* E-Transfer Option */}
+              <div className={styles.etransferOption}>
+                <div className={styles.etransferHeader}>
+                  <span className={styles.etransferBadge}>🍁 Canadian Customers</span>
+                  <h3>Pay via Interac E-Transfer</h3>
+                </div>
+                <p>
+                  Prefer to pay by Interac E-Transfer? Send your payment to{' '}
+                  <a href="mailto:payments@zurairas-collections.com">
+                    payments@zurairas-collections.com
+                  </a>{' '}
+                  and include your items &amp; sizes in the message. We&apos;ll confirm and ship within 1–2 business days.
+                </p>
+              </div>
+
+              <div className={styles.divider} style={{ margin: '1.5rem 0' }}>
+                <span>OR PAY BY CARD</span>
+              </div>
+
               {checkoutError && (
                 <div className={styles.errorCard}>
                   <svg className={styles.errorIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">

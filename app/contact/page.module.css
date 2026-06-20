@@ -1,0 +1,293 @@
+.contactPage {
+  padding-top: 100px;
+  min-height: 100vh;
+  background: var(--color-background, #faf9f7);
+}
+
+/* Hero Banner */
+.hero {
+  background: #1a1a1a;
+  color: #fff;
+  text-align: center;
+  padding: 5rem 2rem;
+}
+
+.heroEyebrow {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #c4956a;
+  margin-bottom: 1rem;
+}
+
+.heroTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 400;
+  margin-bottom: 1rem;
+}
+
+.heroSub {
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  color: rgba(255,255,255,0.6);
+  max-width: 480px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+/* Main content grid */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 5rem 2rem 6rem;
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 5rem;
+  align-items: start;
+}
+
+/* Left column */
+.infoCol h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  font-weight: 400;
+  margin-bottom: 1rem;
+  color: #1a1a1a;
+}
+
+.infoCol p {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  color: #666;
+  line-height: 1.8;
+  margin-bottom: 2.5rem;
+}
+
+.infoBlocks {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.infoBlock {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.infoIcon {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  background: #f5ede3;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #c4956a;
+}
+
+.infoText h4 {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #1a1a1a;
+  margin-bottom: 0.3rem;
+}
+
+.infoText p, .infoText a {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  color: #666;
+  text-decoration: none;
+  line-height: 1.6;
+}
+
+.infoText a:hover {
+  color: #c4956a;
+}
+
+/* E-Transfer card */
+.etransferCard {
+  margin-top: 2.5rem;
+  background: #fff8f0;
+  border: 1px solid #e8d5b7;
+  border-left: 4px solid #c4956a;
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.etransferCard h4 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  color: #5c3d1e;
+  margin-bottom: 0.5rem;
+  font-style: italic;
+}
+
+.etransferCard p {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  color: #7a5535;
+  line-height: 1.7;
+  margin-bottom: 0;
+}
+
+.etransferEmail {
+  display: inline-block;
+  margin-top: 0.5rem;
+  font-weight: 600;
+  color: #c4956a !important;
+  font-size: 1rem !important;
+  letter-spacing: 0.02em;
+}
+
+/* Right column — form */
+.formCard {
+  background: #fff;
+  border: 1px solid #eaeaea;
+  border-radius: 12px;
+  padding: 3rem;
+  box-shadow: 0 4px 30px rgba(0,0,0,0.04);
+}
+
+.formTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  font-weight: 400;
+  margin-bottom: 0.5rem;
+  color: #1a1a1a;
+}
+
+.formSub {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  color: #888;
+  margin-bottom: 2rem;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 1.2rem;
+}
+
+.field label {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #444;
+}
+
+.field input,
+.field select,
+.field textarea {
+  padding: 0.85rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  color: #1a1a1a;
+  background: #fafafa;
+  transition: border-color 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  outline: none;
+  border-color: #c4956a;
+  background: #fff;
+}
+
+.field textarea {
+  resize: vertical;
+  min-height: 130px;
+}
+
+.submitBtn {
+  width: 100%;
+  padding: 1.1rem;
+  background: #1a1a1a;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+  margin-top: 0.5rem;
+}
+
+.submitBtn:hover {
+  background: #c4956a;
+  transform: translateY(-1px);
+}
+
+.submitBtn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.successMsg {
+  text-align: center;
+  padding: 3rem 1rem;
+}
+
+.successIcon {
+  width: 60px;
+  height: 60px;
+  background: #e6f7ec;
+  color: #12b854;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+}
+
+.successMsg h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  font-style: italic;
+  margin-bottom: 0.5rem;
+}
+
+.successMsg p {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+@media (max-width: 900px) {
+  .container {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    padding: 3rem 1.5rem 5rem;
+  }
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+  .formCard {
+    padding: 2rem 1.5rem;
+  }
+}
