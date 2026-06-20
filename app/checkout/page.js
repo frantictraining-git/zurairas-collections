@@ -132,27 +132,27 @@ export default function CheckoutPage() {
                     <Image 
                       src="/images/Apple-Pay-Logo-PNG-File.png" 
                       alt="Apple Pay" 
-                      width={60} 
-                      height={20} 
-                      style={{ objectFit: 'contain', verticalAlign: 'middle' }}
+                      width={65} 
+                      height={25} 
+                      style={{ objectFit: 'contain' }}
                     />
                   </button>
                   <button className={`${styles.expressBtn} ${styles.paypalPay}`}>
                     <Image 
                       src="/images/paypal.png" 
                       alt="PayPal" 
-                      width={60} 
-                      height={20} 
-                      style={{ objectFit: 'contain', verticalAlign: 'middle' }}
+                      width={65} 
+                      height={25} 
+                      style={{ objectFit: 'contain' }}
                     />
                   </button>
                   <button className={`${styles.expressBtn} ${styles.googlePay}`}>
                     <Image 
                       src="/images/google-pay-logo-01.png" 
                       alt="Google Pay" 
-                      width={60} 
-                      height={20} 
-                      style={{ objectFit: 'contain', verticalAlign: 'middle' }}
+                      width={65} 
+                      height={25} 
+                      style={{ objectFit: 'contain' }}
                     />
                   </button>
                 </div>
