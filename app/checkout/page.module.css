@@ -486,3 +486,50 @@
 .etransferOption a:hover {
   text-decoration: underline;
 }
+
+.etransferForm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.emailInput {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1px solid #e8d5b7;
+  border-radius: 4px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  background: #fff;
+  color: #333;
+}
+
+.emailInput:focus {
+  outline: none;
+  border-color: #c4956a;
+}
+
+.etransferBtn {
+  width: 100%;
+  padding: 1rem;
+  background: #c4956a;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.etransferBtn:hover:not(:disabled) {
+  background: #a0785a;
+}
+
+.etransferBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}

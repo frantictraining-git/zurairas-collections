@@ -14,6 +14,7 @@ export default function CheckoutPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [checkoutError, setCheckoutError] = useState('');
   const [soldOutItems, setSoldOutItems] = useState([]); // [{id, size, title}]
+  const [email, setEmail] = useState('');
 
   // Helper: is this cart item sold out?
   const isSoldOut = (item) =>
@@ -59,6 +60,45 @@ export default function CheckoutPage() {
 
     } catch (err) {
       setCheckoutError('Failed to initiate checkout. Please try again.');
+      setIsLoading(false);
+    }
+  };
+
+  const handleETransferCheckout = async (itemsToCheckout) => {
+    if (!email || !email.includes('@')) {
+      setCheckoutError('Please enter a valid email address for E-Transfer tracking.');
+      return;
+    }
+    setIsLoading(true);
+    setCheckoutError('');
+
+    try {
+      const res = await fetch('/api/checkout-etransfer', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cartItems: itemsToCheckout, email })
+      });
+
+      const data = await res.json();
+
+      if (res.status === 409) {
+        setSoldOutItems(data.soldOutItems || []);
+        setCheckoutError(data.message || 'Some items are unavailable.');
+        setIsLoading(false);
+        return;
+      }
+
+      if (!res.ok) {
+        setCheckoutError(data.message || 'Something went wrong.');
+        setIsLoading(false);
+        return;
+      }
+
+      // Redirect to Success page with order_id
+      window.location.href = `/success?order_id=${data.orderId}`;
+
+    } catch (err) {
+      setCheckoutError('Failed to initiate E-Transfer. Please try again.');
       setIsLoading(false);
     }
   };
@@ -109,13 +149,29 @@ export default function CheckoutPage() {
                   <span className={styles.etransferBadge}>🍁 Canadian Customers</span>
                   <h3>Pay via Interac E-Transfer</h3>
                 </div>
-                <p>
-                  Prefer to pay by Interac E-Transfer? Send your payment to{' '}
+                <p style={{marginBottom: '1rem'}}>
+                  Send your payment to{' '}
                   <a href="mailto:payments@zurairas-collections.com">
                     payments@zurairas-collections.com
-                  </a>{' '}
-                  and include your items &amp; sizes in the message. We&apos;ll confirm and ship within 1–2 business days.
+                  </a>{'. '}
+                  Please provide your email below so we can link your payment and send your receipt.
                 </p>
+                <div className={styles.etransferForm}>
+                  <input 
+                    type="email" 
+                    value={email} 
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Your email address" 
+                    className={styles.emailInput}
+                  />
+                  <button 
+                    className={styles.etransferBtn}
+                    onClick={() => soldOutItems.length > 0 ? handleETransferCheckout(availableItems) : handleETransferCheckout(cartItems)}
+                    disabled={isLoading || availableItems.length === 0}
+                  >
+                    {isLoading ? 'Processing...' : `Place E-Transfer Order (CAD ${finalTotal.toFixed(2)})`}
+                  </button>
+                </div>
               </div>
 
               <div className={styles.divider} style={{ margin: '1.5rem 0' }}>
