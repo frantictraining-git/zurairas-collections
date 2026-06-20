@@ -132,8 +132,8 @@ export default function CheckoutPage() {
                     <Image 
                       src="/images/Apple-Pay-Logo-PNG-File.png" 
                       alt="Apple Pay" 
-                      width={65} 
-                      height={25} 
+                      width={100} 
+                      height={40} 
                       style={{ objectFit: 'contain' }}
                     />
                   </button>
