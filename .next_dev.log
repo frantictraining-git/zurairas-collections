@@ -1,0 +1,21 @@
+
+> zurairas-collections@0.1.0 dev
+> next dev
+
+▲ Next.js 16.2.9 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.0.46:3000
+- Environments: .env.local
+✓ Ready in 448ms
+
+ GET /admin 200 in 1956ms (next.js: 1751ms, application-code: 205ms)
+ GET /api/admin/orders 401 in 930ms (next.js: 915ms, application-code: 15ms)
+ GET /admin/login 200 in 283ms (next.js: 259ms, application-code: 24ms)
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior (file:///Users/threedwizard/Desktop/AI Agent/Zurairas-collection/zurairas-collections/.next/dev/static/chunks/node_modules_next_dist_1ybzpk2._.js:1340:25)
+ GET /api/auth/session 200 in 1966ms (next.js: 1953ms, application-code: 12ms)
+ POST /api/admin/login 200 in 375ms (next.js: 354ms, application-code: 21ms)
+ GET /admin 200 in 22ms (next.js: 3ms, application-code: 19ms)
+ GET /admin 200 in 20ms (next.js: 2ms, application-code: 18ms)
+ GET /api/admin/orders 200 in 1634ms (next.js: 3ms, application-code: 1631ms)
+ GET /api/admin/orders 200 in 2.2s (next.js: 1778µs, application-code: 2.2s)
+ POST /api/checkout-etransfer 409 in 606ms (next.js: 445ms, application-code: 161ms)
