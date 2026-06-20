@@ -223,24 +223,26 @@
 }
 
 .payBtn {
+  display: block;
   width: 100%;
-  padding: 1.2rem;
-  background: #000;
+  max-width: 340px;
+  margin: 2rem auto 0;
+  padding: 0.8rem 1.5rem;
+  background: #c4956a;
   color: #fff;
   border: none;
   font-family: 'Inter', sans-serif;
-  font-size: 1rem;
+  font-size: 0.85rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin-top: 2rem;
+  letter-spacing: 0.08em;
   cursor: pointer;
   border-radius: 4px;
   transition: background 0.3s;
 }
 
 .payBtn:hover {
-  background: #333;
+  background: #a0785a;
 }
 
 /* Summary Items */
