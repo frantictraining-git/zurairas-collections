@@ -533,3 +533,27 @@
   opacity: 0.7;
   cursor: not-allowed;
 }
+
+.cardIconsWrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.cardIconsRow {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.cardIcon {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #666;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 0.25rem 0.6rem;
+  background: #fdfdfd;
+}

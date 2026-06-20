@@ -178,6 +178,16 @@ export default function CheckoutPage() {
                 <span>OR PAY BY CARD</span>
               </div>
 
+              <div className={styles.cardIconsWrap}>
+                <div className={styles.cardIconsRow}>
+                  <span className={styles.cardIcon}>VISA</span>
+                  <span className={styles.cardIcon}>MasterCard</span>
+                  <span className={styles.cardIcon}>Amex</span>
+                  <span className={styles.cardIcon}>Apple Pay</span>
+                  <span className={styles.cardIcon}>Google Pay</span>
+                </div>
+              </div>
+
               {checkoutError && (
                 <div className={styles.errorCard}>
                   <svg className={styles.errorIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
