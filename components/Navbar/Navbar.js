@@ -25,6 +25,8 @@ export default function Navbar() {
   }, []);
 
   const handleNavClick = (e, href) => {
+    // Only intercept anchor links (smooth scroll). Let real page links navigate normally.
+    if (!href.startsWith('#')) return;
     e.preventDefault();
     setMenuOpen(false);
     const el = document.querySelector(href);
