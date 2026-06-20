@@ -6,9 +6,9 @@ import Link from 'next/link';
 import styles from './Navbar.module.css';
 
 const navLinks = [
-  { label: 'Collections', href: '#categories' },
-  { label: 'New Arrivals', href: '#arrivals' },
-  { label: 'Our Story', href: '#story' },
+  { label: 'Collections', href: '/#categories' },
+  { label: 'New Arrivals', href: '/#arrivals' },
+  { label: 'Our Story', href: '/our-story' },
   { label: 'Contact', href: '/contact' },
 ];
 

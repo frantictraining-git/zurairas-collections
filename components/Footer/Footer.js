@@ -66,14 +66,14 @@ export default function Footer() {
             <div>
               <h4 className={styles.colTitle}>CUSTOMER CARE</h4>
               <ul className={styles.linkList}>
-                <li><a href="#">Track an Order</a></li>
-                <li><a href="#">Return an Item</a></li>
-                <li><a href="#" style={{textDecoration: 'underline'}}>Contact Us</a></li>
-                <li><a href="#">Exchanges & Returns</a></li>
-                <li><a href="#">Delivery</a></li>
-                <li><a href="#">Payment</a></li>
-                <li><a href="#">Terms & Conditions</a></li>
-                <li><a href="#">Privacy Policy</a></li>
+                <li><a href="/care">Track an Order</a></li>
+                <li><a href="/care">Return an Item</a></li>
+                <li><a href="/contact" style={{textDecoration: 'underline'}}>Contact Us</a></li>
+                <li><a href="/shipping">Exchanges &amp; Returns</a></li>
+                <li><a href="/shipping">Delivery</a></li>
+                <li><a href="/contact">Payment</a></li>
+                <li><a href="/care">Terms &amp; Conditions</a></li>
+                <li><a href="/care">Privacy Policy</a></li>
               </ul>
             </div>
 
@@ -81,12 +81,12 @@ export default function Footer() {
             <div>
               <h4 className={styles.colTitle}>ABOUT US</h4>
               <ul className={styles.linkList}>
-                <li><a href="#">About ZURAIRA&apos;S COLLECTIONS</a></li>
-                <li><a href="#">People & Planet</a></li>
-                <li><a href="#">Sustainability Strategy</a></li>
-                <li><a href="#">Rewards</a></li>
-                <li><a href="#">Affiliates</a></li>
-                <li><a href="#">Careers</a></li>
+                <li><a href="/our-story">About ZURAIRA&apos;S COLLECTIONS</a></li>
+                <li><a href="/our-story">People &amp; Planet</a></li>
+                <li><a href="/our-story">Sustainability Strategy</a></li>
+                <li><a href="/care">Rewards</a></li>
+                <li><a href="/contact">Affiliates</a></li>
+                <li><a href="/contact">Careers</a></li>
               </ul>
             </div>
 
@@ -113,6 +113,7 @@ export default function Footer() {
                 <span className={styles.payIcon} style={{padding: '0 8px', fontSize:'0.7rem', border:'1px solid #ddd', display:'flex', alignItems:'center'}}>MasterCard</span>
                 <span className={styles.payIcon} style={{padding: '0 8px', fontSize:'0.7rem', border:'1px solid #ddd', display:'flex', alignItems:'center'}}>Amex</span>
                 <span className={styles.payIcon} style={{padding: '0 8px', fontSize:'0.7rem', border:'1px solid #ddd', display:'flex', alignItems:'center'}}>Apple Pay</span>
+                <span className={styles.payIcon} style={{padding: '0 8px', fontSize:'0.7rem', border:'1px solid #ddd', display:'flex', alignItems:'center'}}>🍁 E-Transfer</span>
               </div>
             </div>
 
@@ -120,8 +121,8 @@ export default function Footer() {
 
           <div className={styles.brandLine}>
             <h4 className={styles.brandName}>ZURAIRA&apos;S COLLECTIONS</h4>
-            <p className={styles.brandDesc}>Shop the finest handcrafted South Asian luxury designs & be dressed for any occasion</p>
-            <a href="#" className={styles.brandLink}>Visit ZURAIRASCOLLECTIONS.COM</a>
+            <p className={styles.brandDesc}>Shop the finest handcrafted South Asian luxury designs &amp; be dressed for any occasion</p>
+            <a href="https://zurairas-collections.vercel.app" className={styles.brandLink}>Visit ZURAIRASCOLLECTIONS.COM</a>
           </div>
 
         </div>
