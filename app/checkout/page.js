@@ -141,8 +141,8 @@ export default function CheckoutPage() {
                     <Image 
                       src="/images/paypal.png" 
                       alt="PayPal" 
-                      width={65} 
-                      height={25} 
+                      width={78} 
+                      height={30} 
                       style={{ objectFit: 'contain' }}
                     />
                   </button>
@@ -150,8 +150,8 @@ export default function CheckoutPage() {
                     <Image 
                       src="/images/google-pay-logo-01.png" 
                       alt="Google Pay" 
-                      width={65} 
-                      height={25} 
+                      width={91} 
+                      height={35} 
                       style={{ objectFit: 'contain' }}
                     />
                   </button>
