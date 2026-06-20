@@ -228,7 +228,7 @@
   max-width: 340px;
   margin: 2rem auto 0;
   padding: 0.8rem 1.5rem;
-  background: #c4956a;
+  background: #1a1a1a;
   color: #fff;
   border: none;
   font-family: 'Inter', sans-serif;
@@ -242,7 +242,7 @@
 }
 
 .payBtn:hover {
-  background: #a0785a;
+  background: #000;
 }
 
 /* Summary Items */
