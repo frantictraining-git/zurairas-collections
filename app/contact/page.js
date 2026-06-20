@@ -29,11 +29,13 @@ export default function ContactPage() {
 
         {/* Hero */}
         <div className={styles.hero}>
-          <p className={styles.heroEyebrow}>Zuraira&apos;s Collections</p>
-          <h1 className={styles.heroTitle}>We&apos;d Love to Hear From You</h1>
-          <p className={styles.heroSub}>
-            Whether you have a question about sizing, a custom order, or simply want to say hello — we are here for you.
-          </p>
+          <div className={styles.heroContent}>
+            <p className={styles.heroEyebrow}>Zuraira&apos;s Collections</p>
+            <h1 className={styles.heroTitle}>We&apos;d Love to<br />Hear From You</h1>
+            <p className={styles.heroSub}>
+              Whether you have a question about sizing, a custom order, or simply want to say hello — we are here for you.
+            </p>
+          </div>
         </div>
 
         {/* Main Grid */}

@@ -6,34 +6,57 @@
 
 /* Hero Banner */
 .hero {
-  background: #1a1a1a;
-  color: #fff;
-  text-align: center;
-  padding: 5rem 2rem;
+  position: relative;
+  min-height: 420px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: url('/images/contact-hero.jpg') center center / cover no-repeat;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    rgba(30, 10, 5, 0.72) 0%,
+    rgba(30, 10, 5, 0.3) 60%,
+    transparent 100%
+  );
+}
+
+.heroContent {
+  position: relative;
+  z-index: 2;
+  padding: 4rem clamp(2rem, 6vw, 6rem);
+  max-width: 560px;
 }
 
 .heroEyebrow {
   font-family: 'Inter', sans-serif;
   font-size: 0.75rem;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.25em;
   text-transform: uppercase;
-  color: #c4956a;
+  color: #e8c99a;
   margin-bottom: 1rem;
 }
 
 .heroTitle {
   font-family: 'Playfair Display', serif;
-  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-size: clamp(2.2rem, 4.5vw, 3.5rem);
   font-weight: 400;
+  font-style: italic;
+  color: #fff;
+  line-height: 1.2;
   margin-bottom: 1rem;
 }
 
 .heroSub {
   font-family: 'Inter', sans-serif;
   font-size: 1rem;
-  color: rgba(255,255,255,0.6);
-  max-width: 480px;
-  margin: 0 auto;
+  color: rgba(255,255,255,0.75);
+  max-width: 400px;
   line-height: 1.7;
 }
 
