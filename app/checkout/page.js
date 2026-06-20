@@ -128,8 +128,24 @@ export default function CheckoutPage() {
               <div className={styles.expressCheckout}>
                 <p>Express Checkout</p>
                 <div className={styles.expressButtons}>
-                  <button className={`${styles.expressBtn} ${styles.applePay}`}>Apple Pay</button>
-                  <button className={`${styles.expressBtn} ${styles.paypalPay}`}>PayPal</button>
+                  <button className={`${styles.expressBtn} ${styles.applePay}`}>
+                    <Image 
+                      src="/images/Apple-Pay-Logo-PNG-File.png" 
+                      alt="Apple Pay" 
+                      width={60} 
+                      height={20} 
+                      style={{ objectFit: 'contain', verticalAlign: 'middle' }}
+                    />
+                  </button>
+                  <button className={`${styles.expressBtn} ${styles.paypalPay}`}>
+                    <Image 
+                      src="/images/paypal.png" 
+                      alt="PayPal" 
+                      width={60} 
+                      height={20} 
+                      style={{ objectFit: 'contain', verticalAlign: 'middle' }}
+                    />
+                  </button>
                   <button className={`${styles.expressBtn} ${styles.googlePay}`}>
                     <Image 
                       src="/images/google-pay-logo-01.png" 
