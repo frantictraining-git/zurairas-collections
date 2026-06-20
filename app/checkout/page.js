@@ -130,7 +130,15 @@ export default function CheckoutPage() {
                 <div className={styles.expressButtons}>
                   <button className={`${styles.expressBtn} ${styles.applePay}`}>Apple Pay</button>
                   <button className={`${styles.expressBtn} ${styles.paypalPay}`}>PayPal</button>
-                  <button className={`${styles.expressBtn} ${styles.googlePay}`}>Google Pay</button>
+                  <button className={`${styles.expressBtn} ${styles.googlePay}`}>
+                    <Image 
+                      src="/images/google-pay-logo-01.png" 
+                      alt="Google Pay" 
+                      width={60} 
+                      height={20} 
+                      style={{ objectFit: 'contain', verticalAlign: 'middle' }}
+                    />
+                  </button>
                 </div>
                 <div className={styles.divider}>
                   <span>OR</span>
