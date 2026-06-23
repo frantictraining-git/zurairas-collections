@@ -5,10 +5,8 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import styles from './page.module.css';
 
-// Firebase & Image Compression
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { storage } from '@/lib/firebase';
-import imageCompression from 'browser-image-compression';
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -37,6 +35,7 @@ export default function AdminDashboard() {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [toastMessage, setToastMessage] = useState('');
 
   useEffect(() => {
     fetchOrders();
@@ -86,7 +85,7 @@ export default function AdminDashboard() {
     } catch (err) { alert('Network error'); }
   };
 
-  // IMAGE UPLOAD (Compression + Firebase)
+  // IMAGE UPLOAD (Raw file upload, no compression to fix crashing on mobile)
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -95,18 +94,9 @@ export default function AdminDashboard() {
     setUploadProgress(0);
 
     try {
-      // 1. Compress Image
-      const options = {
-        maxSizeMB: 1,
-        maxWidthOrHeight: 1080,
-        useWebWorker: false
-      };
-      const compressedFile = await imageCompression(file, options);
-
-      // 2. Upload to Firebase
-      const fileName = `products/${Date.now()}-${compressedFile.name}`;
+      const fileName = `products/${Date.now()}-${file.name}`;
       const storageRef = ref(storage, fileName);
-      const uploadTask = uploadBytesResumable(storageRef, compressedFile);
+      const uploadTask = uploadBytesResumable(storageRef, file);
 
       uploadTask.on('state_changed', 
         (snapshot) => {
@@ -115,7 +105,7 @@ export default function AdminDashboard() {
         }, 
         (error) => {
           console.error('Upload failed:', error);
-          alert('Failed to upload image.');
+          setToastMessage('Failed to upload image. Please try again.');
           setUploadingImage(false);
         }, 
         async () => {
@@ -126,7 +116,7 @@ export default function AdminDashboard() {
       );
     } catch (error) {
       console.error(error);
-      alert('Error compressing image');
+      setToastMessage('Error uploading image');
       setUploadingImage(false);
     }
   };
@@ -165,7 +155,7 @@ export default function AdminDashboard() {
     };
 
     if (productData.purchasePrice > productData.price) {
-      alert("Error: Purchase Price (COGS) cannot be greater than the Selling Price.");
+      setToastMessage("Purchase Price (COGS) cannot be greater than the Selling Price.");
       return;
     }
 
@@ -254,6 +244,12 @@ export default function AdminDashboard() {
 
       {/* MAIN CONTENT */}
       <main className={styles.main}>
+        {toastMessage && (
+          <div className={styles.glassToast}>
+            <span style={{flex: 1}}>{toastMessage}</span>
+            <button onClick={() => setToastMessage('')} className={styles.closeToast}>✕</button>
+          </div>
+        )}
         {error && <p className={styles.error}>{error}</p>}
 
         {/* ─── ORDERS TAB ─── */}
