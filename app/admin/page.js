@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import styles from './page.module.css';
 
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { ref, uploadString, getDownloadURL } from 'firebase/storage';
 import { storage } from '@/lib/firebase';
 
 export default function AdminDashboard() {
@@ -85,38 +85,56 @@ export default function AdminDashboard() {
     } catch (err) { alert('Network error'); }
   };
 
-  // IMAGE UPLOAD (Raw file upload, no compression to fix crashing on mobile)
+  // IMAGE UPLOAD (Server-side compression via sharp, then Firebase)
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
     setUploadingImage(true);
-    setUploadProgress(0);
+    setUploadProgress(10); // Indicate starting
 
     try {
-      const fileName = `products/${Date.now()}-${file.name}`;
-      const storageRef = ref(storage, fileName);
-      const uploadTask = uploadBytesResumable(storageRef, file);
+      // 1. Send raw file to our Next.js API for server-side compression
+      const formData = new FormData();
+      formData.append('file', file);
 
-      uploadTask.on('state_changed', 
-        (snapshot) => {
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          setUploadProgress(progress);
-        }, 
-        (error) => {
-          console.error('Upload failed:', error);
-          setToastMessage('Failed to upload image. Please try again.');
-          setUploadingImage(false);
-        }, 
-        async () => {
-          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-          setProductImageURL(downloadURL);
-          setUploadingImage(false);
-        }
-      );
+      setToastMessage('Compressing image on server...');
+
+      const compressRes = await fetch('/api/admin/compress', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!compressRes.ok) {
+        throw new Error('Server compression failed');
+      }
+
+      const { base64 } = await compressRes.json();
+      setUploadProgress(50);
+      setToastMessage('Saving compressed image...');
+
+      // 2. Upload the compressed base64 string to Firebase Storage
+      const fileName = `products/${Date.now()}-compressed.webp`;
+      const storageRef = ref(storage, fileName);
+      
+      // Upload string as data_url
+      await uploadString(storageRef, base64, 'data_url');
+      
+      setUploadProgress(100);
+      
+      // 3. Get the final public URL
+      const downloadURL = await getDownloadURL(storageRef);
+      setProductImageURL(downloadURL);
+      
+      setToastMessage('Image compressed and uploaded successfully! ✨');
+      setUploadingImage(false);
+
+      // Auto clear success toast after 3s
+      setTimeout(() => setToastMessage(''), 3000);
+
     } catch (error) {
       console.error(error);
-      setToastMessage('Error uploading image');
+      setToastMessage('Error processing image. Please try again.');
       setUploadingImage(false);
     }
   };
