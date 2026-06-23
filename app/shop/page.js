@@ -1,12 +1,11 @@
 'use client';
 
-import { useState, useMemo, Suspense } from 'react';
+import { useState, useMemo, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Navbar from '@/components/Navbar/Navbar';
 import Footer from '@/components/Footer/Footer';
 import FilterSidebar from '@/components/FilterSidebar/FilterSidebar';
 import ShopGrid from '@/components/ShopGrid/ShopGrid';
-import { products } from '@/lib/data';
 import styles from './page.module.css';
 
 // Declared outside ShopPage to avoid re-creating component on every render
@@ -37,28 +36,42 @@ function PaginationControls({ totalPages, currentPage, setCurrentPage }) {
 
 function ShopContent() {
   const searchParams = useSearchParams();
-  // Read the ?category= param from the URL (e.g. /shop?category=Jewellery)
   const urlCategory = searchParams.get('category');
-  const initialCategory = urlCategory
-    ? products.find(p => p.category.toLowerCase() === urlCategory.toLowerCase())?.category || 'All'
-    : 'All';
+  
+  const [products, setProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const initialCategory = urlCategory || 'All';
 
   const [currentCategory, setCategory] = useState(initialCategory);
   const [currentColor, setColor] = useState('All');
   const [currentPage, setCurrentPage] = useState(1);
   const [isMobileFilterOpen, setMobileFilterOpen] = useState(false);
 
-  const ITEMS_PER_PAGE = 4;
+  const ITEMS_PER_PAGE = 8;
+
+  useEffect(() => {
+    fetch('/api/products')
+      .then(res => res.json())
+      .then(data => {
+        setProducts(data);
+        setIsLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setIsLoading(false);
+      });
+  }, []);
 
   const categories = useMemo(() => {
-    const cats = new Set(products.map(p => p.category));
+    const cats = new Set(products.map(p => p.category).filter(Boolean));
     return Array.from(cats);
-  }, []);
+  }, [products]);
 
   const colors = useMemo(() => {
     const cols = new Set(products.map(p => p.color).filter(Boolean));
     return Array.from(cols);
-  }, []);
+  }, [products]);
 
   const filteredProducts = useMemo(() => {
     let filtered = products;
@@ -72,6 +85,10 @@ function ShopContent() {
   const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const paginatedProducts = filteredProducts.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+  if (isLoading) {
+    return <main className={styles.shopContainer} style={{padding: '8rem', textAlign: 'center'}}>Loading Collection...</main>;
+  }
 
   return (
     <main className={styles.shopContainer}>

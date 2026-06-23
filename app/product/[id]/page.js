@@ -1,17 +1,31 @@
 import Navbar from '@/components/Navbar/Navbar';
 import Footer from '@/components/Footer/Footer';
-import ProductGallery from '@/components/ProductGallery/ProductGallery';
 import ProductSidebar from '@/components/ProductSidebar/ProductSidebar';
 import YouMayAlsoLike from '@/components/YouMayAlsoLike/YouMayAlsoLike';
 import { products } from '@/lib/data';
+import dbConnect from '@/lib/mongodb';
+import Product from '@/models/Product';
 import styles from './page.module.css';
 
 export default async function ProductPage({ params }) {
   const { id } = await params;
-  // Find product by id, fallback to first product if not found
-  const product = products.find(p => p.id === id) || products[0];
+  
+  await dbConnect();
+  
+  // Find product by id from database
+  let product = await Product.findOne({ id }).lean();
+  
+  // Fallback to static if not in DB yet (for prototype transition)
+  if (!product) {
+    product = products.find(p => p.id === id) || products[0];
+  } else {
+    // Stringify _id for client components
+    product._id = product._id.toString();
+  }
 
-  const recommendations = products.filter(p => p.id !== product.id).slice(0, 6);
+  // Get recommendations
+  const dbRecommendations = await Product.find({ id: { $ne: product.id } }).limit(6).lean();
+  const recommendations = dbRecommendations.map(p => ({...p, _id: p._id.toString()}));
 
   return (
     <>

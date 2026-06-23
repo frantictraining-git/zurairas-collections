@@ -5,61 +5,71 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import styles from './page.module.css';
 
+// Firebase & Image Compression
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { storage } from '@/lib/firebase';
+import imageCompression from 'browser-image-compression';
+
 export default function AdminDashboard() {
   const router = useRouter();
   
-  // Tabs: 'orders', 'products', 'todo'
+  // Tabs: 'orders', 'products', 'categories', 'todo'
   const [activeTab, setActiveTab] = useState('orders');
   
-  // Orders State
+  // State
   const [orders, setOrders] = useState([]);
-  
-  // Products State
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [todos, setTodos] = useState([]);
+  
+  // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
-  
-  // Loading & Error State
+  const [productTitle, setProductTitle] = useState('');
+  const [productSlug, setProductSlug] = useState('');
+  const [productImageURL, setProductImageURL] = useState('');
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+
+  // Todo Modal State
+  const [isTodoModalOpen, setIsTodoModalOpen] = useState(false);
+  const [editingTodo, setEditingTodo] = useState(null);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-
-  // To-Do State (using localStorage for prototype)
-  const [todos, setTodos] = useState([]);
-  const [newTodo, setNewTodo] = useState('');
 
   useEffect(() => {
     fetchOrders();
     fetchProducts();
-    const savedTodos = localStorage.getItem('zuraira_todos');
-    if (savedTodos) {
-      try { setTodos(JSON.parse(savedTodos)); } catch(e) {}
-    }
+    fetchCategories();
+    fetchTodos();
   }, []);
 
+  // API Fetchers
   const fetchOrders = async () => {
     try {
       const res = await fetch('/api/admin/orders');
       if (res.status === 401) { router.push('/admin/login'); return; }
-      if (!res.ok) throw new Error('Failed to fetch orders');
-      const data = await res.json();
-      setOrders(data);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+      if (res.ok) setOrders(await res.json());
+    } catch (err) { setError(err.message); } finally { setLoading(false); }
   };
-
   const fetchProducts = async () => {
     try {
       const res = await fetch('/api/admin/products');
-      if (res.ok) {
-        const data = await res.json();
-        setProducts(data);
-      }
-    } catch (err) {
-      console.error(err);
-    }
+      if (res.ok) setProducts(await res.json());
+    } catch (err) { console.error(err); }
+  };
+  const fetchCategories = async () => {
+    try {
+      const res = await fetch('/api/admin/categories');
+      if (res.ok) setCategories(await res.json());
+    } catch (err) { console.error(err); }
+  };
+  const fetchTodos = async () => {
+    try {
+      const res = await fetch('/api/admin/todos');
+      if (res.ok) setTodos(await res.json());
+    } catch (err) { console.error(err); }
   };
 
   // ORDER ACTIONS
@@ -71,26 +81,78 @@ export default function AdminDashboard() {
         body: JSON.stringify({ action })
       });
       if (res.status === 401) return router.push('/admin/login');
-      if (!res.ok) {
-        const data = await res.json();
-        alert(data.message || 'Action failed');
-        return;
-      }
-      fetchOrders();
+      if (res.ok) fetchOrders();
+      else alert((await res.json()).message || 'Action failed');
     } catch (err) { alert('Network error'); }
   };
 
+  // IMAGE UPLOAD (Compression + Firebase)
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploadingImage(true);
+    setUploadProgress(0);
+
+    try {
+      // 1. Compress Image
+      const options = {
+        maxSizeMB: 1,
+        maxWidthOrHeight: 1080,
+        useWebWorker: true
+      };
+      const compressedFile = await imageCompression(file, options);
+
+      // 2. Upload to Firebase
+      const fileName = `products/${Date.now()}-${compressedFile.name}`;
+      const storageRef = ref(storage, fileName);
+      const uploadTask = uploadBytesResumable(storageRef, compressedFile);
+
+      uploadTask.on('state_changed', 
+        (snapshot) => {
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          setUploadProgress(progress);
+        }, 
+        (error) => {
+          console.error('Upload failed:', error);
+          alert('Failed to upload image.');
+          setUploadingImage(false);
+        }, 
+        async () => {
+          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+          setProductImageURL(downloadURL);
+          setUploadingImage(false);
+        }
+      );
+    } catch (error) {
+      console.error(error);
+      alert('Error compressing image');
+      setUploadingImage(false);
+    }
+  };
+
   // PRODUCT ACTIONS
+  const handleTitleChange = (e) => {
+    const title = e.target.value;
+    setProductTitle(title);
+    if (!editingProduct) {
+      // Auto-Slug
+      setProductSlug(title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''));
+    }
+  };
+
   const handleSaveProduct = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
-    const id = formData.get('id').toLowerCase().replace(/\s+/g, '-');
+    const id = formData.get('id');
     const productData = {
       id: id,
-      title: formData.get('title'),
+      title: productTitle,
       price: parseFloat(formData.get('price')),
+      purchasePrice: parseFloat(formData.get('purchasePrice')) || 0,
+      discountPercentage: parseFloat(formData.get('discountPercentage')) || 0,
       category: formData.get('category'),
-      images: [formData.get('image1')],
+      images: [productImageURL],
       story: formData.get('story'),
       fabric: formData.get('fabric'),
       care: formData.get('care'),
@@ -105,86 +167,83 @@ export default function AdminDashboard() {
     try {
       const url = editingProduct ? `/api/admin/products/${editingProduct.id}` : '/api/admin/products';
       const method = editingProduct ? 'PUT' : 'POST';
+      const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(productData) });
       
-      const res = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(productData)
-      });
-
       if (!res.ok) {
         const errData = await res.json();
         alert(errData.message || 'Failed to save product');
         return;
       }
-      
       setIsModalOpen(false);
-      setEditingProduct(null);
       fetchProducts();
-    } catch (err) {
-      alert('Error saving product');
-    }
+    } catch (err) { alert('Error saving product'); }
   };
 
   const handleDeleteProduct = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this product?')) return;
-    try {
-      const res = await fetch(`/api/admin/products/${id}`, { method: 'DELETE' });
-      if (res.ok) fetchProducts();
-    } catch (err) {}
+    if (!window.confirm('Delete this product?')) return;
+    const res = await fetch(`/api/admin/products/${id}`, { method: 'DELETE' });
+    if (res.ok) fetchProducts();
+  };
+
+  // CATEGORY ACTIONS
+  const handleAddCategory = async (e) => {
+    e.preventDefault();
+    const name = e.target.name.value;
+    if (!name.trim()) return;
+    const res = await fetch('/api/admin/categories', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name }) });
+    if (res.ok) { e.target.reset(); fetchCategories(); }
+    else alert((await res.json()).message);
+  };
+  const handleDeleteCategory = async (id) => {
+    if (!window.confirm('Delete this category?')) return;
+    const res = await fetch(`/api/admin/categories/${id}`, { method: 'DELETE' });
+    if (res.ok) fetchCategories();
   };
 
   // TODO ACTIONS
-  const handleAddTodo = (e) => {
+  const handleSaveTodo = async (e) => {
     e.preventDefault();
-    if (!newTodo.trim()) return;
-    const updated = [...todos, { id: Date.now(), text: newTodo }];
-    setTodos(updated);
-    localStorage.setItem('zuraira_todos', JSON.stringify(updated));
-    setNewTodo('');
+    const formData = new FormData(e.target);
+    const todoData = {
+      title: formData.get('title'),
+      details: formData.get('details'),
+      dueDate: formData.get('dueDate') ? new Date(formData.get('dueDate')) : null,
+      completed: formData.get('completed') === 'true'
+    };
+
+    const url = editingTodo ? `/api/admin/todos/${editingTodo._id}` : '/api/admin/todos';
+    const method = editingTodo ? 'PUT' : 'POST';
+    
+    const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(todoData) });
+    if (res.ok) { setIsTodoModalOpen(false); fetchTodos(); }
   };
 
-  const handleDeleteTodo = (id) => {
-    const updated = todos.filter(t => t.id !== id);
-    setTodos(updated);
-    localStorage.setItem('zuraira_todos', JSON.stringify(updated));
+  const handleDeleteTodo = async (id) => {
+    if (!window.confirm('Delete this task?')) return;
+    const res = await fetch(`/api/admin/todos/${id}`, { method: 'DELETE' });
+    if (res.ok) fetchTodos();
   };
 
+  const toggleTodoComplete = async (todo) => {
+    await fetch(`/api/admin/todos/${todo._id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ completed: !todo.completed }) });
+    fetchTodos();
+  };
 
   if (loading) return <div className={styles.loading}>Loading Dashboard...</div>;
 
   return (
     <div className={styles.adminContainer}>
-      
       {/* SIDEBAR */}
       <aside className={styles.sidebar}>
         <h1 className={styles.sidebarTitle}>Zuraira's</h1>
         <nav>
-          <div 
-            className={`${styles.navItem} ${activeTab === 'orders' ? styles.active : ''}`}
-            onClick={() => setActiveTab('orders')}
-          >
-            📦 Recent Orders
-          </div>
-          <div 
-            className={`${styles.navItem} ${activeTab === 'products' ? styles.active : ''}`}
-            onClick={() => setActiveTab('products')}
-          >
-            👗 Products
-          </div>
-          <div 
-            className={`${styles.navItem} ${activeTab === 'todo' ? styles.active : ''}`}
-            onClick={() => setActiveTab('todo')}
-          >
-            📝 To-Do List
-          </div>
+          <div className={`${styles.navItem} ${activeTab === 'orders' ? styles.active : ''}`} onClick={() => setActiveTab('orders')}>📦 Recent Orders</div>
+          <div className={`${styles.navItem} ${activeTab === 'products' ? styles.active : ''}`} onClick={() => setActiveTab('products')}>👗 Products</div>
+          <div className={`${styles.navItem} ${activeTab === 'categories' ? styles.active : ''}`} onClick={() => setActiveTab('categories')}>📂 Categories</div>
+          <div className={`${styles.navItem} ${activeTab === 'todo' ? styles.active : ''}`} onClick={() => setActiveTab('todo')}>📝 To-Do List</div>
         </nav>
-        
         <div className={styles.logoutWrapper}>
-          <button className={styles.logoutBtn} onClick={() => {
-            document.cookie = 'admin_token=; Max-Age=0; path=/';
-            router.push('/admin/login');
-          }}>Logout</button>
+          <button className={styles.logoutBtn} onClick={() => { document.cookie = 'admin_token=; Max-Age=0; path=/'; router.push('/admin/login'); }}>Logout</button>
         </div>
       </aside>
 
@@ -195,55 +254,26 @@ export default function AdminDashboard() {
         {/* ─── ORDERS TAB ─── */}
         {activeTab === 'orders' && (
           <div>
-            <div className={styles.sectionHeader}>
-              <h2>Recent Orders</h2>
-              <span className={styles.orderCount}>{orders.length} total orders</span>
-            </div>
+            <div className={styles.sectionHeader}><h2>Recent Orders</h2><span className={styles.orderCount}>{orders.length} orders</span></div>
             <div className={styles.orderList}>
               {orders.map(order => (
                 <div key={order._id} className={styles.orderCard}>
                   <div className={styles.orderHeader}>
-                    <div className={styles.orderMeta}>
-                      <h3>{order.orderId}</h3>
-                      <span className={styles.date}>{new Date(order.createdAt).toLocaleString()}</span>
-                    </div>
-                    <div className={`${styles.statusBadge} ${styles[order.status]}`}>
-                      {order.status.replace('_', ' ').toUpperCase()}
-                    </div>
+                    <div className={styles.orderMeta}><h3>{order.orderId}</h3><span className={styles.date}>{new Date(order.createdAt).toLocaleString()}</span></div>
+                    <div className={`${styles.statusBadge} ${styles[order.status]}`}>{order.status.replace('_', ' ').toUpperCase()}</div>
                   </div>
-
                   <div className={styles.orderDetails}>
-                    <div className={styles.customerInfo}>
-                      <p><strong>Customer:</strong> {order.email}</p>
-                      <p><strong>Payment:</strong> {order.paymentMethod === 'etransfer' ? '🍁 E-Transfer' : '💳 Stripe'}</p>
-                      <p><strong>Total:</strong> CAD {order.total.toFixed(2)}</p>
-                    </div>
-
-                    <div className={styles.itemsList}>
-                      <h4>Items</h4>
-                      <ul>
-                        {order.cartItems.map((item, idx) => (
-                          <li key={idx}>{item.quantity}x {item.title} (Size: {item.size})</li>
-                        ))}
-                      </ul>
-                    </div>
+                    <div className={styles.customerInfo}><p><strong>Customer:</strong> {order.email}</p><p><strong>Payment:</strong> {order.paymentMethod === 'etransfer' ? '🍁 E-Transfer' : '💳 Stripe'}</p><p><strong>Total:</strong> CAD {order.total.toFixed(2)}</p></div>
+                    <div className={styles.itemsList}><h4>Items</h4><ul>{order.cartItems.map((item, idx) => (<li key={idx}>{item.quantity}x {item.title} (Size: {item.size})</li>))}</ul></div>
                   </div>
-
                   {order.status === 'awaiting_payment' && (
                     <div className={styles.orderActions}>
-                      <button className={styles.confirmBtn} onClick={() => handleOrderAction(order._id, 'confirm')}>
-                        Confirm Payment Received
-                      </button>
-                      <button className={styles.cancelBtn} onClick={() => {
-                        if(window.confirm('Cancel order and release inventory?')) handleOrderAction(order._id, 'cancel');
-                      }}>
-                        Cancel & Release Stock
-                      </button>
+                      <button className={styles.confirmBtn} onClick={() => handleOrderAction(order._id, 'confirm')}>Confirm Payment</button>
+                      <button className={styles.cancelBtn} onClick={() => window.confirm('Cancel order?') && handleOrderAction(order._id, 'cancel')}>Cancel & Release</button>
                     </div>
                   )}
                 </div>
               ))}
-              {orders.length === 0 && <div className={styles.emptyState}>No orders found.</div>}
             </div>
           </div>
         )}
@@ -253,31 +283,20 @@ export default function AdminDashboard() {
           <div>
             <div className={styles.sectionHeader}>
               <h2>Product Inventory</h2>
-              <button className={styles.addBtn} onClick={() => { setEditingProduct(null); setIsModalOpen(true); }}>
-                + Add New Product
-              </button>
+              <button className={styles.addBtn} onClick={() => { 
+                setEditingProduct(null); setProductTitle(''); setProductSlug(''); setProductImageURL(''); setIsModalOpen(true); 
+              }}>+ Add Product</button>
             </div>
-            
             <div className={styles.tableWrapper}>
               <table className={styles.productTable}>
-                <thead>
-                  <tr>
-                    <th>Image</th>
-                    <th>Title</th>
-                    <th>Price</th>
-                    <th>Inventory (S/M/L/XL)</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
+                <thead><tr><th>Image</th><th>Title</th><th>Price</th><th>Inventory</th><th>Actions</th></tr></thead>
                 <tbody>
                   {products.map(prod => (
                     <tr key={prod.id}>
-                      <td>
-                        {prod.images?.[0] && (
-                          <img src={prod.images[0]} alt={prod.title} className={styles.productImg} />
-                        )}
+                      <td>{prod.images?.[0] && <img src={prod.images[0]} alt={prod.title} className={styles.productImg} />}</td>
+                      <td><strong>{prod.title}</strong><br/><span style={{color: '#666', fontSize: '0.8rem'}}>{prod.category}</span>
+                        {prod.discountPercentage > 0 && <span style={{marginLeft: '8px', color: '#dc3545', fontSize: '0.8rem', fontWeight: 'bold'}}>-{prod.discountPercentage}% OFF</span>}
                       </td>
-                      <td><strong>{prod.title}</strong><br/><span style={{color: '#666', fontSize: '0.8rem'}}>{prod.category}</span></td>
                       <td>CAD {prod.price.toFixed(2)}</td>
                       <td>
                         <span className={`${styles.stockBadge} ${prod.inventory.S === 0 ? styles.soldOut : ''}`}>S: {prod.inventory.S}</span>
@@ -286,14 +305,37 @@ export default function AdminDashboard() {
                         <span className={`${styles.stockBadge} ${prod.inventory.XL === 0 ? styles.soldOut : ''}`}>XL: {prod.inventory.XL}</span>
                       </td>
                       <td>
-                        <button className={styles.actionBtn} onClick={() => { setEditingProduct(prod); setIsModalOpen(true); }}>Edit</button>
+                        <button className={styles.actionBtn} onClick={() => { 
+                          setEditingProduct(prod); setProductTitle(prod.title); setProductSlug(prod.id); setProductImageURL(prod.images[0] || ''); setIsModalOpen(true); 
+                        }}>Edit</button>
                         <button className={`${styles.actionBtn} ${styles.deleteBtn}`} onClick={() => handleDeleteProduct(prod.id)}>Delete</button>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-              {products.length === 0 && <div className={styles.emptyState} style={{border: 'none'}}>No products found. Add one above!</div>}
+            </div>
+          </div>
+        )}
+
+        {/* ─── CATEGORIES TAB ─── */}
+        {activeTab === 'categories' && (
+          <div>
+            <div className={styles.sectionHeader}><h2>Manage Categories</h2></div>
+            <div className={styles.todoList}>
+              <form onSubmit={handleAddCategory} className={styles.todoForm}>
+                <input type="text" name="name" placeholder="e.g. Summer Collection" className={styles.todoInput} required />
+                <button type="submit" className={styles.todoBtn}>Add Category</button>
+              </form>
+              <div>
+                {categories.map(cat => (
+                  <div key={cat._id} className={styles.todoItem}>
+                    <span style={{fontWeight: 'bold'}}>{cat.name}</span>
+                    <button className={`${styles.actionBtn} ${styles.deleteBtn}`} onClick={() => handleDeleteCategory(cat._id)}>Delete</button>
+                  </div>
+                ))}
+                {categories.length === 0 && <p style={{textAlign: 'center', marginTop: '2rem'}}>No categories yet.</p>}
+              </div>
             </div>
           </div>
         )}
@@ -302,36 +344,34 @@ export default function AdminDashboard() {
         {activeTab === 'todo' && (
           <div>
             <div className={styles.sectionHeader}>
-              <h2>Boutique To-Do List</h2>
+              <h2>Reminders & To-Dos</h2>
+              <button className={styles.addBtn} onClick={() => { setEditingTodo(null); setIsTodoModalOpen(true); }}>+ Add Task</button>
             </div>
             <div className={styles.todoList}>
-              <form onSubmit={handleAddTodo} className={styles.todoForm}>
-                <input 
-                  type="text" 
-                  value={newTodo} 
-                  onChange={(e) => setNewTodo(e.target.value)} 
-                  placeholder="e.g. Call vendor tomorrow" 
-                  className={styles.todoInput}
-                />
-                <button type="submit" className={styles.todoBtn}>Add</button>
-              </form>
-              
-              <div>
-                {todos.map(todo => (
-                  <div key={todo.id} className={styles.todoItem}>
-                    <span>{todo.text}</span>
-                    <button className={styles.actionBtn} onClick={() => handleDeleteTodo(todo.id)}>Done</button>
+              {todos.map(todo => (
+                <div key={todo._id} className={styles.todoItem} style={{opacity: todo.completed ? 0.6 : 1}}>
+                  <div style={{flex: 1, display: 'flex', alignItems: 'center', gap: '1rem'}}>
+                    <input type="checkbox" checked={todo.completed} onChange={() => toggleTodoComplete(todo)} style={{width: '20px', height: '20px', cursor: 'pointer'}} />
+                    <div>
+                      <h4 style={{margin: '0', textDecoration: todo.completed ? 'line-through' : 'none'}}>{todo.title}</h4>
+                      {todo.details && <p style={{margin: '0.2rem 0 0 0', fontSize: '0.85rem', color: '#666'}}>{todo.details}</p>}
+                      {todo.dueDate && <span style={{fontSize: '0.8rem', color: '#dc3545', fontWeight: 'bold'}}>Due: {new Date(todo.dueDate).toLocaleDateString()}</span>}
+                    </div>
                   </div>
-                ))}
-                {todos.length === 0 && <p style={{color: '#666', textAlign: 'center', marginTop: '2rem'}}>You're all caught up!</p>}
-              </div>
+                  <div>
+                    <button className={styles.actionBtn} onClick={() => { setEditingTodo(todo); setIsTodoModalOpen(true); }}>Edit</button>
+                    <button className={`${styles.actionBtn} ${styles.deleteBtn}`} onClick={() => handleDeleteTodo(todo._id)}>Delete</button>
+                  </div>
+                </div>
+              ))}
+              {todos.length === 0 && <p style={{textAlign: 'center', marginTop: '2rem'}}>You're all caught up!</p>}
             </div>
           </div>
         )}
 
       </main>
 
-      {/* PRODUCT MODAL */}
+      {/* ─── PRODUCT MODAL ─── */}
       {isModalOpen && (
         <div className={styles.modalOverlay}>
           <div className={styles.modalContent}>
@@ -344,38 +384,50 @@ export default function AdminDashboard() {
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
                   <label>Title</label>
-                  <input type="text" name="title" defaultValue={editingProduct?.title} required />
+                  <input type="text" name="title" value={productTitle} onChange={handleTitleChange} required />
                 </div>
-                {!editingProduct && (
-                  <div className={styles.formGroup}>
-                    <label>ID (URL Slug)</label>
-                    <input type="text" name="id" placeholder="e.g. green-silk-dress" required />
-                  </div>
-                )}
-                {editingProduct && (
-                  <input type="hidden" name="id" value={editingProduct.id} />
-                )}
+                <div className={styles.formGroup}>
+                  <label>Slug / ID (Unique)</label>
+                  <input type="text" name="id" value={productSlug} onChange={(e) => setProductSlug(e.target.value)} required readOnly={!!editingProduct} style={{backgroundColor: editingProduct ? '#f8f9fa' : '#fff'}} />
+                  <small style={{color: '#666'}}>Auto-generated from title. Must be unique.</small>
+                </div>
               </div>
 
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
-                  <label>Price (CAD)</label>
+                  <label>Selling Price (CAD)</label>
                   <input type="number" step="0.01" name="price" defaultValue={editingProduct?.price} required />
                 </div>
                 <div className={styles.formGroup}>
-                  <label>Category</label>
-                  <select name="category" defaultValue={editingProduct?.category || 'Dresses'}>
-                    <option value="Dresses">Dresses</option>
-                    <option value="Sets">Sets</option>
-                    <option value="Accessories">Accessories</option>
-                  </select>
+                  <label>Purchase Price / COGS (Hidden)</label>
+                  <input type="number" step="0.01" name="purchasePrice" defaultValue={editingProduct?.purchasePrice || 0} />
+                </div>
+                <div className={styles.formGroup}>
+                  <label>Discount Percentage (%)</label>
+                  <input type="number" min="0" max="100" name="discountPercentage" defaultValue={editingProduct?.discountPercentage || 0} />
                 </div>
               </div>
 
               <div className={styles.formGroup}>
-                <label>Image URL</label>
-                <input type="text" name="image1" placeholder="https://..." defaultValue={editingProduct?.images?.[0]} required />
-                <small style={{color: '#666'}}>For now, paste a direct link to an image (e.g. from Shopify, Instagram, or Imgur)</small>
+                <label>Category</label>
+                <select name="category" defaultValue={editingProduct?.category || ''} required>
+                  <option value="" disabled>Select a Category...</option>
+                  {categories.map(c => <option key={c._id} value={c.name}>{c.name}</option>)}
+                </select>
+              </div>
+
+              <div className={styles.formGroup}>
+                <label>Upload Photo (Use Camera or Gallery)</label>
+                <div style={{display: 'flex', gap: '1rem', alignItems: 'center'}}>
+                  {/* HTML5 capture attribute opens camera natively on mobile */}
+                  <input type="file" accept="image/*" capture="environment" onChange={handleImageUpload} style={{flex: 1}} disabled={uploadingImage} />
+                  {uploadingImage && <span style={{fontWeight: 'bold', color: '#c4956a'}}>Uploading... {Math.round(uploadProgress)}%</span>}
+                </div>
+                {productImageURL && (
+                  <div style={{marginTop: '1rem'}}>
+                    <img src={productImageURL} alt="Preview" style={{height: '100px', borderRadius: '4px', border: '1px solid #ccc'}} />
+                  </div>
+                )}
               </div>
 
               <div className={styles.formGroup}>
@@ -396,27 +448,50 @@ export default function AdminDashboard() {
 
               <h4 style={{marginTop: '1rem', marginBottom: '0.5rem'}}>Inventory Quantities</h4>
               <div className={styles.inventoryGrid}>
-                <div className={styles.formGroup}>
-                  <label>Size S</label>
-                  <input type="number" min="0" name="invS" defaultValue={editingProduct?.inventory?.S || 0} />
-                </div>
-                <div className={styles.formGroup}>
-                  <label>Size M</label>
-                  <input type="number" min="0" name="invM" defaultValue={editingProduct?.inventory?.M || 0} />
-                </div>
-                <div className={styles.formGroup}>
-                  <label>Size L</label>
-                  <input type="number" min="0" name="invL" defaultValue={editingProduct?.inventory?.L || 0} />
-                </div>
-                <div className={styles.formGroup}>
-                  <label>Size XL</label>
-                  <input type="number" min="0" name="invXL" defaultValue={editingProduct?.inventory?.XL || 0} />
-                </div>
+                <div className={styles.formGroup}><label>Size S</label><input type="number" min="0" name="invS" defaultValue={editingProduct?.inventory?.S || 0} /></div>
+                <div className={styles.formGroup}><label>Size M</label><input type="number" min="0" name="invM" defaultValue={editingProduct?.inventory?.M || 0} /></div>
+                <div className={styles.formGroup}><label>Size L</label><input type="number" min="0" name="invL" defaultValue={editingProduct?.inventory?.L || 0} /></div>
+                <div className={styles.formGroup}><label>Size XL</label><input type="number" min="0" name="invXL" defaultValue={editingProduct?.inventory?.XL || 0} /></div>
               </div>
 
               <div className={styles.modalActions}>
                 <button type="button" onClick={() => setIsModalOpen(false)} style={{background: 'transparent', border: 'none', cursor: 'pointer', fontWeight: 600}}>Cancel</button>
-                <button type="submit" className={styles.saveBtn}>Save Product</button>
+                <button type="submit" className={styles.saveBtn} disabled={uploadingImage}>Save Product</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ─── TODO MODAL ─── */}
+      {isTodoModalOpen && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modalContent} style={{maxWidth: '500px'}}>
+            <div className={styles.modalHeader}>
+              <h3>{editingTodo ? 'Edit Task' : 'Add Task'}</h3>
+              <button className={styles.closeModal} onClick={() => setIsTodoModalOpen(false)}>&times;</button>
+            </div>
+            
+            <form onSubmit={handleSaveTodo}>
+              <div className={styles.formGroup}>
+                <label>Task Title</label>
+                <input type="text" name="title" defaultValue={editingTodo?.title} required />
+              </div>
+              <div className={styles.formGroup}>
+                <label>Details / Notes</label>
+                <textarea name="details" rows="3" defaultValue={editingTodo?.details}></textarea>
+              </div>
+              <div className={styles.formGroup}>
+                <label>Due Date (Optional)</label>
+                <input type="date" name="dueDate" defaultValue={editingTodo?.dueDate ? new Date(editingTodo.dueDate).toISOString().split('T')[0] : ''} />
+              </div>
+              <div className={styles.formGroup} style={{display: 'none'}}>
+                <input type="hidden" name="completed" value={editingTodo?.completed ? 'true' : 'false'} />
+              </div>
+
+              <div className={styles.modalActions}>
+                <button type="button" onClick={() => setIsTodoModalOpen(false)} style={{background: 'transparent', border: 'none', cursor: 'pointer', fontWeight: 600}}>Cancel</button>
+                <button type="submit" className={styles.saveBtn}>Save Task</button>
               </div>
             </form>
           </div>

@@ -26,10 +26,46 @@
 
 .price {
   font-family: 'Inter', sans-serif;
-  font-size: 1rem;
-  font-weight: 400;
+  font-size: 1.1rem;
   color: #333;
+}
+
+.discountBadge {
+  width: 45px;
+  height: 45px;
+  background-color: #d93025;
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  box-shadow: 0 4px 6px rgba(217, 48, 37, 0.3);
+  transform: rotate(10deg);
+  flex-shrink: 0;
+}
+
+.priceContainer {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
   margin-bottom: 2.5rem;
+}
+
+.originalPrice {
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  color: #999;
+  text-decoration: line-through;
+}
+
+.discountedPrice {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.25rem;
+  color: #d93025;
+  font-weight: 600;
 }
 
 /* Actions */

@@ -15,17 +15,26 @@ export default function ShopGrid({ products }) {
 
   return (
     <div className={styles.grid}>
-      {products.map((item) => (
+      {products.map((item) => {
+        const hasDiscount = item.discountPercentage > 0;
+        const discountedPrice = item.price - (item.price * (item.discountPercentage / 100));
+        
+        return (
         <Link href={`/product/${item.id}`} key={item.id} className={styles.card}>
           <div className={styles.imageWrap}>
             <Image
-              src={item.images[0]}
+              src={item.images?.[0] || 'https://via.placeholder.com/400x600'}
               alt={item.title}
               fill
               className={styles.image}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
-            {item.tag && (
+            {hasDiscount && (
+              <span className={styles.discountBadge}>
+                -{item.discountPercentage}%
+              </span>
+            )}
+            {!hasDiscount && item.tag && (
               <span 
                 className={styles.badge}
                 style={{ backgroundColor: item.tagColor || '#000' }}
@@ -35,12 +44,21 @@ export default function ShopGrid({ products }) {
             )}
           </div>
           <div className={styles.info}>
-            <p className={styles.designer}>{item.designer}</p>
+            <p className={styles.designer}>{item.category || item.designer}</p>
             <h3 className={styles.name}>{item.title}</h3>
-            <p className={styles.price}>{item.formattedPrice}</p>
+            <div className={styles.priceContainer}>
+              {hasDiscount ? (
+                <>
+                  <span className={styles.originalPrice}>CAD {item.price.toFixed(2)}</span>
+                  <span className={styles.discountedPrice}>CAD {discountedPrice.toFixed(2)}</span>
+                </>
+              ) : (
+                <p className={styles.price}>CAD {item.price.toFixed(2)}</p>
+              )}
+            </div>
           </div>
         </Link>
-      ))}
+      )})}
     </div>
   );
 }

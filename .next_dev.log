@@ -19,3 +19,4 @@
  GET /api/admin/orders 200 in 1634ms (next.js: 3ms, application-code: 1631ms)
  GET /api/admin/orders 200 in 2.2s (next.js: 1778µs, application-code: 2.2s)
  POST /api/checkout-etransfer 409 in 606ms (next.js: 445ms, application-code: 161ms)
+[?25h

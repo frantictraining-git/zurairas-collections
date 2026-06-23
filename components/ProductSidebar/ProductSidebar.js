@@ -22,9 +22,27 @@ export default function ProductSidebar({ product }) {
   return (
     <div className={styles.sidebar}>
       {/* Product Header */}
-      <p className={styles.designer}>{product.designer || "ZURAIRA's COLLECTIONS"}</p>
-      <h1 className={styles.title}>{product.title}</h1>
-      <p className={styles.price}>{product.price}</p>
+      <p className={styles.designer}>{product.category || product.designer || "ZURAIRA's COLLECTIONS"}</p>
+      
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <h1 className={styles.title}>{product.title}</h1>
+        {product.discountPercentage > 0 && (
+          <span className={styles.discountBadge}>
+            -{product.discountPercentage}%
+          </span>
+        )}
+      </div>
+
+      <div className={styles.priceContainer}>
+        {product.discountPercentage > 0 ? (
+          <>
+            <span className={styles.originalPrice}>CAD {product.price.toFixed(2)}</span>
+            <span className={styles.discountedPrice}>CAD {(product.price - (product.price * (product.discountPercentage / 100))).toFixed(2)}</span>
+          </>
+        ) : (
+          <p className={styles.price}>CAD {product.price?.toFixed(2)}</p>
+        )}
+      </div>
 
       {/* Sizing */}
       <div className={styles.sizeSection}>

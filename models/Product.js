@@ -9,6 +9,8 @@ const ProductSchema = new mongoose.Schema({
   story: { type: String },
   fabric: { type: String },
   care: { type: String },
+  discountPercentage: { type: Number, default: 0 },
+  purchasePrice: { type: Number, default: 0 }, // Cost of Goods Sold, hidden from customers
   // Inventory tracked strictly by size SKU
   inventory: {
     S: { type: Number, default: 0 },
