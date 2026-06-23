@@ -74,14 +74,13 @@ export default function BrandStory() {
 
             <div className={`${styles.pillars} reveal-stagger`}>
               {[
-                { icon: '✦', label: 'Handcrafted', desc: 'Every piece made by hand with care' },
-                { icon: '✿', label: 'Authentic', desc: 'True to heritage, made with integrity' },
-                { icon: '◈', label: 'Artisan-Made', desc: 'Supporting skilled artisans' },
+                { label: 'Handcrafted', desc: 'Every piece made by hand with care' },
+                { label: 'Authentic', desc: 'True to heritage, made with integrity' },
+                { label: 'Artisan-Made', desc: 'Supporting skilled artisans' },
               ].map(p => (
                 <div key={p.label} className={styles.pillar}>
-                  <span className={styles.pillarIcon}>{p.icon}</span>
                   <strong>{p.label}</strong>
-                  <span>{p.desc}</span>
+                  <p>{p.desc}</p>
                 </div>
               ))}
             </div>

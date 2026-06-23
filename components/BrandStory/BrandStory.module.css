@@ -80,28 +80,23 @@
 }
 
 .pillar {
-  display: grid;
-  grid-template-columns: 2rem 8rem 1fr;
+  display: flex;
   align-items: center;
-  gap: 0.75rem;
-}
-
-.pillarIcon {
-  font-size: 1.1rem;
-  color: var(--color-accent);
-  text-align: center;
+  gap: 1rem;
 }
 
 .pillar strong {
-  font-size: 0.85rem;
+  font-size: 1rem;
   font-weight: 700;
   color: var(--color-charcoal);
   letter-spacing: 0.02em;
+  min-width: 8rem;
 }
 
-.pillar span {
-  font-size: 0.82rem;
-  color: var(--color-light-text);
+.pillar p {
+  font-size: 0.95rem;
+  color: var(--color-mid);
+  margin: 0;
 }
 
 /* ─── Responsive ─── */
@@ -113,6 +108,6 @@
 
 @media (max-width: 560px) {
   .imageStack { height: 300px; }
-  .pillar { grid-template-columns: 1.5rem 1fr; grid-template-rows: auto auto; }
-  .pillar span { grid-column: 2; }
+  .pillar { flex-direction: column; align-items: flex-start; gap: 0.25rem; }
+  .pillar strong { min-width: auto; }
 }
