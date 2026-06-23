@@ -93,7 +93,7 @@ function ShopContent() {
   return (
     <main className={styles.shopContainer}>
       <div className={styles.shopHeader}>
-        <h1>The Resort Collection</h1>
+        <h1>{currentCategory === 'All' ? 'Shop All Collections' : currentCategory}</h1>
         <p className={styles.count}>{filteredProducts.length} Items</p>
         <button 
           className={styles.mobileFilterBtn}
