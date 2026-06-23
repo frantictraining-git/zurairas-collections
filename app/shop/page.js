@@ -78,7 +78,7 @@ function ShopContent() {
     if (currentCategory !== 'All') filtered = filtered.filter(p => p.category === currentCategory);
     if (currentColor !== 'All') filtered = filtered.filter(p => p.color === currentColor);
     return filtered;
-  }, [currentCategory, currentColor]);
+  }, [currentCategory, currentColor, products]);
 
   useMemo(() => { setCurrentPage(1); }, [currentCategory, currentColor]);
 
