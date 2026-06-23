@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import styles from './page.module.css';
 
-import { ref, uploadString, getDownloadURL } from 'firebase/storage';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { storage } from '@/lib/firebase';
 
 export default function AdminDashboard() {
@@ -131,31 +131,40 @@ export default function AdminDashboard() {
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, width, height);
 
-          // 4. Compress to JPEG (80% quality)
-          const base64 = canvas.toDataURL('image/jpeg', 0.8);
+          // 4. Compress to JPEG Blob (80% quality)
+          canvas.toBlob((blob) => {
+            if (!blob) {
+              setToastMessage('Error creating image data.');
+              setUploadingImage(false);
+              return;
+            }
 
-          setUploadProgress(50);
-          setToastMessage('Saving compressed image to storage...');
+            // 5. Upload to Firebase with reliable resumable task
+            const fileName = `products/${Date.now()}-compressed.jpg`;
+            const storageRef = ref(storage, fileName);
+            const uploadTask = uploadBytesResumable(storageRef, blob);
 
-          // 5. Upload to Firebase
-          const fileName = `products/${Date.now()}-compressed.jpg`;
-          const storageRef = ref(storage, fileName);
-          
-          try {
-            await uploadString(storageRef, base64, 'data_url');
-            setUploadProgress(100);
-            
-            const downloadURL = await getDownloadURL(storageRef);
-            setProductImageURL(downloadURL);
-            
-            setToastMessage('Image compressed and uploaded successfully! ✨');
-            setUploadingImage(false);
-            setTimeout(() => setToastMessage(''), 3000);
-          } catch (uploadError) {
-            console.error(uploadError);
-            setToastMessage('Upload to storage failed.');
-            setUploadingImage(false);
-          }
+            uploadTask.on('state_changed', 
+              (snapshot) => {
+                // Progress from 50% to 100%
+                const progress = 50 + ((snapshot.bytesTransferred / snapshot.totalBytes) * 50);
+                setUploadProgress(progress);
+                setToastMessage(`Saving to cloud... ${Math.round(progress)}%`);
+              }, 
+              (error) => {
+                console.error('Upload failed:', error);
+                setToastMessage('Upload to storage failed. Please try again.');
+                setUploadingImage(false);
+              }, 
+              async () => {
+                const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                setProductImageURL(downloadURL);
+                setToastMessage('Image compressed and uploaded successfully! ✨');
+                setUploadingImage(false);
+                setTimeout(() => setToastMessage(''), 3000);
+              }
+            );
+          }, 'image/jpeg', 0.8);
         };
 
         img.onerror = () => {
