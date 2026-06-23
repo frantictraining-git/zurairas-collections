@@ -87,97 +87,39 @@ export default function AdminDashboard() {
     } catch (err) { alert('Network error'); }
   };
 
-  // IMAGE UPLOAD (Native HTML5 Canvas Compression - Bypasses Vercel Limits & WebWorker Crashes)
+  // IMAGE UPLOAD (Raw file upload to Firebase. Next.js handles compression automatically on the storefront)
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
     setUploadingImage(true);
-    setUploadProgress(10);
-    setToastMessage('Processing image on device...');
+    setUploadProgress(0);
+    setToastMessage('Uploading raw image directly to storage...');
 
     try {
-      // 1. Read file as Data URL
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      
-      reader.onload = (event) => {
-        const img = new window.Image();
-        img.src = event.target.result;
-        
-        img.onload = async () => {
-          // 2. Calculate new dimensions (max 1080px)
-          const MAX_WIDTH = 1080;
-          const MAX_HEIGHT = 1080;
-          let width = img.width;
-          let height = img.height;
+      const fileName = `products/${Date.now()}-${file.name}`;
+      const storageRef = ref(storage, fileName);
+      const uploadTask = uploadBytesResumable(storageRef, file);
 
-          if (width > height) {
-            if (width > MAX_WIDTH) {
-              height = Math.round(height * (MAX_WIDTH / width));
-              width = MAX_WIDTH;
-            }
-          } else {
-            if (height > MAX_HEIGHT) {
-              width = Math.round(width * (MAX_HEIGHT / height));
-              height = MAX_HEIGHT;
-            }
-          }
-
-          // 3. Draw to canvas
-          const canvas = document.createElement('canvas');
-          canvas.width = width;
-          canvas.height = height;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, width, height);
-
-          // 4. Compress to JPEG Blob (80% quality)
-          canvas.toBlob((blob) => {
-            if (!blob) {
-              setToastMessage('Error creating image data.');
-              setUploadingImage(false);
-              return;
-            }
-
-            // 5. Upload to Firebase with reliable resumable task
-            const fileName = `products/${Date.now()}-compressed.jpg`;
-            const storageRef = ref(storage, fileName);
-            const uploadTask = uploadBytesResumable(storageRef, blob);
-
-            uploadTask.on('state_changed', 
-              (snapshot) => {
-                // Progress from 50% to 100%
-                const progress = 50 + ((snapshot.bytesTransferred / snapshot.totalBytes) * 50);
-                setUploadProgress(progress);
-                setToastMessage(`Saving to cloud... ${Math.round(progress)}%`);
-              }, 
-              (error) => {
-                console.error('Upload failed:', error);
-                setToastMessage('Upload to storage failed. Please try again.');
-                setUploadingImage(false);
-              }, 
-              async () => {
-                const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-                setProductImageURL(downloadURL);
-                setToastMessage('Image compressed and uploaded successfully! ✨');
-                setUploadingImage(false);
-                setTimeout(() => setToastMessage(''), 3000);
-              }
-            );
-          }, 'image/jpeg', 0.8);
-        };
-
-        img.onerror = () => {
-          setToastMessage('Error loading image into memory.');
+      uploadTask.on('state_changed', 
+        (snapshot) => {
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          setUploadProgress(progress);
+          setToastMessage(`Saving to cloud... ${Math.round(progress)}%`);
+        }, 
+        (error) => {
+          console.error('Upload failed:', error);
+          setToastMessage('Upload to storage failed. Please try again.');
           setUploadingImage(false);
-        };
-      };
-      
-      reader.onerror = () => {
-        setToastMessage('Error reading file from device.');
-        setUploadingImage(false);
-      };
-
+        }, 
+        async () => {
+          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+          setProductImageURL(downloadURL);
+          setToastMessage('Image uploaded successfully! ✨');
+          setUploadingImage(false);
+          setTimeout(() => setToastMessage(''), 3000);
+        }
+      );
     } catch (error) {
       console.error(error);
       setToastMessage(`Image Error: ${error.message}`);
