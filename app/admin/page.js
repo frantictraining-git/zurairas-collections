@@ -210,7 +210,7 @@ export default function AdminDashboard() {
     };
 
     if (productData.purchasePrice > productData.price) {
-      setPurchasePriceError("Purchase Price (COGS) cannot be greater than the Selling Price.");
+      setPurchasePriceError("Purchase Price cannot be greater than the Selling Price.");
       return;
     }
     setPurchasePriceError('');
@@ -472,7 +472,7 @@ export default function AdminDashboard() {
                   <input type="number" step="0.01" name="price" defaultValue={editingProduct?.price || ''} onFocus={(e) => e.target.select()} required />
                 </div>
                 <div className={styles.formGroup}>
-                  <label>Purchase Price / COGS (Hidden)</label>
+                  <label>Purchase Price (Hidden)</label>
                   <input type="number" step="0.01" name="purchasePrice" defaultValue={editingProduct?.purchasePrice || ''} onFocus={(e) => e.target.select()} style={{ borderColor: purchasePriceError ? '#dc3545' : '', borderWidth: purchasePriceError ? '2px' : '1px' }} />
                   {purchasePriceError && (
                     <div style={{ marginTop: '0.5rem', padding: '0.4rem', background: '#f8d7da', color: '#721c24', borderRadius: '4px', border: '1px solid #f5c6cb', fontSize: '0.8rem' }}>
