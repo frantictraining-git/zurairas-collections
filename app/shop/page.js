@@ -45,6 +45,7 @@ function ShopContent() {
 
   const [currentCategory, setCategory] = useState(initialCategory);
   const [currentColor, setColor] = useState('All');
+  const [currentPrice, setPrice] = useState('All');
   const [currentPage, setCurrentPage] = useState(1);
   const [isMobileFilterOpen, setMobileFilterOpen] = useState(false);
 
@@ -77,10 +78,15 @@ function ShopContent() {
     let filtered = products;
     if (currentCategory !== 'All') filtered = filtered.filter(p => p.category === currentCategory);
     if (currentColor !== 'All') filtered = filtered.filter(p => p.color === currentColor);
+    if (currentPrice !== 'All') {
+      if (currentPrice === 'Under $100') filtered = filtered.filter(p => p.price < 100);
+      else if (currentPrice === '$100 - $200') filtered = filtered.filter(p => p.price >= 100 && p.price <= 200);
+      else if (currentPrice === 'Over $200') filtered = filtered.filter(p => p.price > 200);
+    }
     return filtered;
-  }, [currentCategory, currentColor, products]);
+  }, [currentCategory, currentColor, currentPrice, products]);
 
-  useMemo(() => { setCurrentPage(1); }, [currentCategory, currentColor]);
+  useMemo(() => { setCurrentPage(1); }, [currentCategory, currentColor, currentPrice]);
 
   const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -112,6 +118,8 @@ function ShopContent() {
             colors={colors}
             currentColor={currentColor}
             setColor={setColor}
+            currentPrice={currentPrice}
+            setPrice={setPrice}
             isMobileOpen={isMobileFilterOpen}
             setMobileOpen={setMobileFilterOpen}
           />

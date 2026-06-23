@@ -6,6 +6,7 @@ import styles from './FilterSidebar.module.css';
 export default function FilterSidebar({ 
   categories, currentCategory, setCategory, 
   colors, currentColor, setColor,
+  currentPrice, setPrice,
   isMobileOpen, setMobileOpen 
 }) {
   const [openSection, setOpenSection] = useState('category'); // default open
@@ -101,15 +102,39 @@ export default function FilterSidebar({
           {openSection === 'price' && (
             <div className={styles.accordionContent}>
               <label className={styles.radioLabel}>
-                <input type="radio" name="price" />
+                <input 
+                  type="radio" 
+                  name="price" 
+                  checked={currentPrice === 'All'}
+                  onChange={() => setPrice('All')} 
+                />
+                <span className={styles.radioText}>All Prices</span>
+              </label>
+              <label className={styles.radioLabel}>
+                <input 
+                  type="radio" 
+                  name="price" 
+                  checked={currentPrice === 'Under $100'}
+                  onChange={() => setPrice('Under $100')} 
+                />
                 <span className={styles.radioText}>Under $100</span>
               </label>
               <label className={styles.radioLabel}>
-                <input type="radio" name="price" />
+                <input 
+                  type="radio" 
+                  name="price" 
+                  checked={currentPrice === '$100 - $200'}
+                  onChange={() => setPrice('$100 - $200')} 
+                />
                 <span className={styles.radioText}>$100 - $200</span>
               </label>
               <label className={styles.radioLabel}>
-                <input type="radio" name="price" />
+                <input 
+                  type="radio" 
+                  name="price" 
+                  checked={currentPrice === 'Over $200'}
+                  onChange={() => setPrice('Over $200')} 
+                />
                 <span className={styles.radioText}>Over $200</span>
               </label>
             </div>

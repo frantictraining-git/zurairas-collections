@@ -474,8 +474,8 @@ export default function AdminDashboard() {
               <div className={styles.formGroup}>
                 <label>Upload Photo (Use Camera or Gallery)</label>
                 <div style={{display: 'flex', gap: '1rem', alignItems: 'center'}}>
-                  {/* HTML5 capture attribute opens camera natively on mobile */}
-                  <input type="file" accept="image/*" capture="environment" onChange={handleImageUpload} style={{flex: 1}} disabled={uploadingImage} />
+                  {/* HTML5 capture attribute removed to allow Photo Library access on iOS */}
+                  <input type="file" accept="image/*" onChange={handleImageUpload} style={{flex: 1}} disabled={uploadingImage} />
                   {uploadingImage && <span style={{fontWeight: 'bold', color: '#c4956a'}}>Uploading... {Math.round(uploadProgress)}%</span>}
                 </div>
                 {productImageURL && (
