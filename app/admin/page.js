@@ -177,6 +177,12 @@ export default function AdminDashboard() {
       return;
     }
 
+    const totalInventory = productData.inventory.S + productData.inventory.M + productData.inventory.L + productData.inventory.XL;
+    if (totalInventory === 0) {
+      setToastMessage("Please enter stock quantity for at least one size (S, M, L, or XL).");
+      return;
+    }
+
     try {
       const url = editingProduct ? `/api/admin/products/${editingProduct.id}` : '/api/admin/products';
       const method = editingProduct ? 'PUT' : 'POST';
