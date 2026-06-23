@@ -348,6 +348,15 @@ export default function AdminDashboard() {
         {/* ─── TO-DO LIST TAB ─── */}
         {activeTab === 'todo' && (
           <div>
+            {todos.filter(t => !t.completed && t.dueDate && new Date(t.dueDate) < new Date(Date.now() + 24 * 60 * 60 * 1000)).length > 0 && (
+              <div style={{ background: '#ffeeba', color: '#856404', padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem', border: '1px solid #ffeeba', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <span style={{ fontSize: '1.5rem' }}>🔔</span>
+                <div>
+                  <h4 style={{ margin: 0 }}>Reminder!</h4>
+                  <p style={{ margin: '0.2rem 0 0 0', fontSize: '0.9rem' }}>You have tasks that are overdue or due within the next 24 hours.</p>
+                </div>
+              </div>
+            )}
             <div className={styles.sectionHeader}>
               <h2>Reminders & To-Dos</h2>
               <button className={styles.addBtn} onClick={() => { setEditingTodo(null); setIsTodoModalOpen(true); }}>+ Add Task</button>
@@ -360,7 +369,7 @@ export default function AdminDashboard() {
                     <div>
                       <h4 style={{margin: '0', textDecoration: todo.completed ? 'line-through' : 'none'}}>{todo.title}</h4>
                       {todo.details && <p style={{margin: '0.2rem 0 0 0', fontSize: '0.85rem', color: '#666'}}>{todo.details}</p>}
-                      {todo.dueDate && <span style={{fontSize: '0.8rem', color: '#dc3545', fontWeight: 'bold'}}>Due: {new Date(todo.dueDate).toLocaleDateString()}</span>}
+                      {todo.dueDate && <span style={{fontSize: '0.8rem', color: '#dc3545', fontWeight: 'bold'}}>Due: {new Date(todo.dueDate).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}</span>}
                     </div>
                   </div>
                   <div>
@@ -493,8 +502,8 @@ export default function AdminDashboard() {
                 <textarea name="details" rows="3" defaultValue={editingTodo?.details}></textarea>
               </div>
               <div className={styles.formGroup}>
-                <label>Due Date (Optional)</label>
-                <input type="date" name="dueDate" defaultValue={editingTodo?.dueDate ? new Date(editingTodo.dueDate).toISOString().split('T')[0] : ''} />
+                <label>Due Date & Time (Optional)</label>
+                <input type="datetime-local" name="dueDate" defaultValue={editingTodo?.dueDate ? new Date(new Date(editingTodo.dueDate).getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0,16) : ''} />
               </div>
               <div className={styles.formGroup} style={{display: 'none'}}>
                 <input type="hidden" name="completed" value={editingTodo?.completed ? 'true' : 'false'} />
