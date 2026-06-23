@@ -425,7 +425,7 @@ export default function AdminDashboard() {
                   )}
                 </div>
                 <div className={styles.formGroup}>
-                  <label>Discount Percentage (%)</label>
+                  <label>Discount (%)</label>
                   <input type="number" min="0" max="100" name="discountPercentage" defaultValue={editingProduct?.discountPercentage || ''} onFocus={(e) => e.target.select()} />
                 </div>
               </div>
