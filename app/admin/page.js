@@ -108,7 +108,9 @@ export default function AdminDashboard() {
       });
 
       if (!compressRes.ok) {
-        throw new Error('Server compression failed');
+        let errText = 'Unknown Error';
+        try { errText = await compressRes.text(); } catch(e){}
+        throw new Error(`Server returned ${compressRes.status}: ${errText}`);
       }
 
       const { base64 } = await compressRes.json();
@@ -136,7 +138,7 @@ export default function AdminDashboard() {
 
     } catch (error) {
       console.error(error);
-      setToastMessage('Error processing image. Please try again.');
+      setToastMessage(`Image Error: ${error.message}`);
       setUploadingImage(false);
     }
   };
