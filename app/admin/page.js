@@ -140,6 +140,7 @@ export default function AdminDashboard() {
       purchasePrice: parseFloat(formData.get('purchasePrice')) || 0,
       discountPercentage: parseFloat(formData.get('discountPercentage')) || 0,
       category: formData.get('category'),
+      color: formData.get('color'),
       images: [productImageURL],
       story: formData.get('story'),
       fabric: formData.get('fabric'),
@@ -429,18 +430,45 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              <div className={styles.formGroup}>
-                <label>Category</label>
-                {categories.length === 0 ? (
-                  <div style={{ padding: '0.8rem', background: '#fff3cd', color: '#856404', borderRadius: '4px', border: '1px solid #ffeeba', fontSize: '0.9rem' }}>
-                    <strong>No Categories Found.</strong> You must go to the "📂 Categories" tab on the left sidebar and create a category first before you can add products.
-                  </div>
-                ) : (
-                  <select name="category" defaultValue={editingProduct?.category || ''} required>
-                    <option value="" disabled>Select a Category...</option>
-                    {categories.map(c => <option key={c._id} value={c.name}>{c.name}</option>)}
-                  </select>
-                )}
+              <div className={styles.formRow}>
+                <div className={styles.formGroup}>
+                  <label>Category</label>
+                  {categories.length === 0 ? (
+                    <div style={{ padding: '0.8rem', background: '#fff3cd', color: '#856404', borderRadius: '4px', border: '1px solid #ffeeba', fontSize: '0.9rem' }}>
+                      <strong>No Categories Found.</strong> You must go to the "📂 Categories" tab on the left sidebar and create a category first before you can add products.
+                    </div>
+                  ) : (
+                    <select name="category" defaultValue={editingProduct?.category || ''} required>
+                      <option value="" disabled>Select a Category...</option>
+                      {categories.map(c => <option key={c._id} value={c.name}>{c.name}</option>)}
+                    </select>
+                  )}
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label>Primary Color</label>
+                  <input type="text" name="color" list="colorSuggestions" defaultValue={editingProduct?.color || ''} placeholder="e.g. Red, Rose Gold, Teal" />
+                  <datalist id="colorSuggestions">
+                    <option value="Black" />
+                    <option value="White" />
+                    <option value="Beige / Nude" />
+                    <option value="Grey" />
+                    <option value="Red" />
+                    <option value="Maroon / Burgundy" />
+                    <option value="Blue" />
+                    <option value="Navy" />
+                    <option value="Green" />
+                    <option value="Olive / Emerald" />
+                    <option value="Yellow / Mustard" />
+                    <option value="Pink" />
+                    <option value="Purple" />
+                    <option value="Orange" />
+                    <option value="Brown" />
+                    <option value="Gold" />
+                    <option value="Silver" />
+                    <option value="Multi-Color" />
+                  </datalist>
+                </div>
               </div>
 
               <div className={styles.formGroup}>
