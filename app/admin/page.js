@@ -5,8 +5,8 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import styles from './page.module.css';
 
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { storage } from '@/lib/firebase';
+import { compressImage } from '@/lib/compressImage';
+import { uploadToFirebase } from '@/lib/uploadToFirebase';
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -87,42 +87,34 @@ export default function AdminDashboard() {
     } catch (err) { alert('Network error'); }
   };
 
-  // IMAGE UPLOAD (Raw file upload to Firebase. Next.js handles compression automatically on the storefront)
+  // IMAGE UPLOAD (Compression + Firebase Upload)
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
     setUploadingImage(true);
     setUploadProgress(0);
-    setToastMessage('Uploading raw image directly to storage...');
+    setToastMessage('Compressing image...');
 
     try {
-      const fileName = `products/${Date.now()}-${file.name}`;
-      const storageRef = ref(storage, fileName);
-      const uploadTask = uploadBytesResumable(storageRef, file);
+      // 1. Compress the image
+      const compressedFile = await compressImage(file);
+      
+      setToastMessage('Uploading to storage...');
 
-      uploadTask.on('state_changed', 
-        (snapshot) => {
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          setUploadProgress(progress);
-          setToastMessage(`Saving to cloud... ${Math.round(progress)}%`);
-        }, 
-        (error) => {
-          console.error('Upload failed:', error);
-          setToastMessage('Upload to storage failed. Please try again.');
-          setUploadingImage(false);
-        }, 
-        async () => {
-          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-          setProductImageURL(downloadURL);
-          setToastMessage('Image uploaded successfully! ✨');
-          setUploadingImage(false);
-          setTimeout(() => setToastMessage(''), 3000);
-        }
-      );
+      // 2. Upload to Firebase
+      const downloadURL = await uploadToFirebase(compressedFile, (pct) => {
+        setUploadProgress(pct);
+        setToastMessage(`Saving to cloud... ${pct}%`);
+      });
+
+      setProductImageURL(downloadURL);
+      setToastMessage('Image uploaded successfully! ✨');
+      setTimeout(() => setToastMessage(''), 3000);
     } catch (error) {
-      console.error(error);
-      setToastMessage(`Image Error: ${error.message}`);
+      console.error('Image processing/upload failed:', error);
+      setToastMessage(`Image Error: ${error.message || 'Upload failed'}`);
+    } finally {
       setUploadingImage(false);
     }
   };
