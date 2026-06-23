@@ -164,6 +164,11 @@ export default function AdminDashboard() {
       }
     };
 
+    if (productData.purchasePrice > productData.price) {
+      alert("Error: Purchase Price (COGS) cannot be greater than the Selling Price.");
+      return;
+    }
+
     try {
       const url = editingProduct ? `/api/admin/products/${editingProduct.id}` : '/api/admin/products';
       const method = editingProduct ? 'PUT' : 'POST';
@@ -396,24 +401,30 @@ export default function AdminDashboard() {
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
                   <label>Selling Price (CAD)</label>
-                  <input type="number" step="0.01" name="price" defaultValue={editingProduct?.price} required />
+                  <input type="number" step="0.01" name="price" defaultValue={editingProduct?.price || ''} onFocus={(e) => e.target.select()} required />
                 </div>
                 <div className={styles.formGroup}>
                   <label>Purchase Price / COGS (Hidden)</label>
-                  <input type="number" step="0.01" name="purchasePrice" defaultValue={editingProduct?.purchasePrice || 0} />
+                  <input type="number" step="0.01" name="purchasePrice" defaultValue={editingProduct?.purchasePrice || ''} onFocus={(e) => e.target.select()} />
                 </div>
                 <div className={styles.formGroup}>
                   <label>Discount Percentage (%)</label>
-                  <input type="number" min="0" max="100" name="discountPercentage" defaultValue={editingProduct?.discountPercentage || 0} />
+                  <input type="number" min="0" max="100" name="discountPercentage" defaultValue={editingProduct?.discountPercentage || ''} onFocus={(e) => e.target.select()} />
                 </div>
               </div>
 
               <div className={styles.formGroup}>
                 <label>Category</label>
-                <select name="category" defaultValue={editingProduct?.category || ''} required>
-                  <option value="" disabled>Select a Category...</option>
-                  {categories.map(c => <option key={c._id} value={c.name}>{c.name}</option>)}
-                </select>
+                {categories.length === 0 ? (
+                  <div style={{ padding: '0.8rem', background: '#fff3cd', color: '#856404', borderRadius: '4px', border: '1px solid #ffeeba', fontSize: '0.9rem' }}>
+                    <strong>No Categories Found.</strong> You must go to the "📂 Categories" tab on the left sidebar and create a category first before you can add products.
+                  </div>
+                ) : (
+                  <select name="category" defaultValue={editingProduct?.category || ''} required>
+                    <option value="" disabled>Select a Category...</option>
+                    {categories.map(c => <option key={c._id} value={c.name}>{c.name}</option>)}
+                  </select>
+                )}
               </div>
 
               <div className={styles.formGroup}>
@@ -448,10 +459,10 @@ export default function AdminDashboard() {
 
               <h4 style={{marginTop: '1rem', marginBottom: '0.5rem'}}>Inventory Quantities</h4>
               <div className={styles.inventoryGrid}>
-                <div className={styles.formGroup}><label>Size S</label><input type="number" min="0" name="invS" defaultValue={editingProduct?.inventory?.S || 0} /></div>
-                <div className={styles.formGroup}><label>Size M</label><input type="number" min="0" name="invM" defaultValue={editingProduct?.inventory?.M || 0} /></div>
-                <div className={styles.formGroup}><label>Size L</label><input type="number" min="0" name="invL" defaultValue={editingProduct?.inventory?.L || 0} /></div>
-                <div className={styles.formGroup}><label>Size XL</label><input type="number" min="0" name="invXL" defaultValue={editingProduct?.inventory?.XL || 0} /></div>
+                <div className={styles.formGroup}><label>Size S</label><input type="number" min="0" name="invS" defaultValue={editingProduct?.inventory?.S ?? ''} onFocus={(e) => e.target.select()} /></div>
+                <div className={styles.formGroup}><label>Size M</label><input type="number" min="0" name="invM" defaultValue={editingProduct?.inventory?.M ?? ''} onFocus={(e) => e.target.select()} /></div>
+                <div className={styles.formGroup}><label>Size L</label><input type="number" min="0" name="invL" defaultValue={editingProduct?.inventory?.L ?? ''} onFocus={(e) => e.target.select()} /></div>
+                <div className={styles.formGroup}><label>Size XL</label><input type="number" min="0" name="invXL" defaultValue={editingProduct?.inventory?.XL ?? ''} onFocus={(e) => e.target.select()} /></div>
               </div>
 
               <div className={styles.modalActions}>
