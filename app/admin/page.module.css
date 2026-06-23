@@ -362,7 +362,7 @@
   display: block; margin-bottom: 0.5rem; font-weight: 500; font-size: 0.9rem;
 }
 .formGroup input, .formGroup textarea, .formGroup select {
-  width: 100%; padding: 0.6rem; border: 1px solid #ccc; border-radius: 4px; font-family: inherit;
+  width: 100%; padding: 0.6rem; border: 1px solid #ccc; border-radius: 4px; font-family: inherit; font-size: 1rem;
 }
 .formRow {
   display: flex; gap: 1rem;
