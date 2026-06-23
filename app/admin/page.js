@@ -87,54 +87,87 @@ export default function AdminDashboard() {
     } catch (err) { alert('Network error'); }
   };
 
-  // IMAGE UPLOAD (Server-side compression via sharp, then Firebase)
+  // IMAGE UPLOAD (Native HTML5 Canvas Compression - Bypasses Vercel Limits & WebWorker Crashes)
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
     setUploadingImage(true);
-    setUploadProgress(10); // Indicate starting
+    setUploadProgress(10);
+    setToastMessage('Processing image on device...');
 
     try {
-      // 1. Send raw file to our Next.js API for server-side compression
-      const formData = new FormData();
-      formData.append('file', file);
-
-      setToastMessage('Compressing image on server...');
-
-      const compressRes = await fetch('/api/admin/compress', {
-        method: 'POST',
-        body: formData
-      });
-
-      if (!compressRes.ok) {
-        let errText = 'Unknown Error';
-        try { errText = await compressRes.text(); } catch(e){}
-        throw new Error(`Server returned ${compressRes.status}: ${errText}`);
-      }
-
-      const { base64 } = await compressRes.json();
-      setUploadProgress(50);
-      setToastMessage('Saving compressed image...');
-
-      // 2. Upload the compressed base64 string to Firebase Storage
-      const fileName = `products/${Date.now()}-compressed.webp`;
-      const storageRef = ref(storage, fileName);
+      // 1. Read file as Data URL
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
       
-      // Upload string as data_url
-      await uploadString(storageRef, base64, 'data_url');
-      
-      setUploadProgress(100);
-      
-      // 3. Get the final public URL
-      const downloadURL = await getDownloadURL(storageRef);
-      setProductImageURL(downloadURL);
-      
-      setToastMessage('Image compressed and uploaded successfully! ✨');
-      setUploadingImage(false);
+      reader.onload = (event) => {
+        const img = new window.Image();
+        img.src = event.target.result;
+        
+        img.onload = async () => {
+          // 2. Calculate new dimensions (max 1080px)
+          const MAX_WIDTH = 1080;
+          const MAX_HEIGHT = 1080;
+          let width = img.width;
+          let height = img.height;
 
-      // Auto clear success toast after 3s
-      setTimeout(() => setToastMessage(''), 3000);
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height = Math.round(height * (MAX_WIDTH / width));
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width = Math.round(width * (MAX_HEIGHT / height));
+              height = MAX_HEIGHT;
+            }
+          }
+
+          // 3. Draw to canvas
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // 4. Compress to JPEG (80% quality)
+          const base64 = canvas.toDataURL('image/jpeg', 0.8);
+
+          setUploadProgress(50);
+          setToastMessage('Saving compressed image to storage...');
+
+          // 5. Upload to Firebase
+          const fileName = `products/${Date.now()}-compressed.jpg`;
+          const storageRef = ref(storage, fileName);
+          
+          try {
+            await uploadString(storageRef, base64, 'data_url');
+            setUploadProgress(100);
+            
+            const downloadURL = await getDownloadURL(storageRef);
+            setProductImageURL(downloadURL);
+            
+            setToastMessage('Image compressed and uploaded successfully! ✨');
+            setUploadingImage(false);
+            setTimeout(() => setToastMessage(''), 3000);
+          } catch (uploadError) {
+            console.error(uploadError);
+            setToastMessage('Upload to storage failed.');
+            setUploadingImage(false);
+          }
+        };
+
+        img.onerror = () => {
+          setToastMessage('Error loading image into memory.');
+          setUploadingImage(false);
+        };
+      };
+      
+      reader.onerror = () => {
+        setToastMessage('Error reading file from device.');
+        setUploadingImage(false);
+      };
 
     } catch (error) {
       console.error(error);
