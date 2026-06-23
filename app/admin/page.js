@@ -99,7 +99,7 @@ export default function AdminDashboard() {
       const options = {
         maxSizeMB: 1,
         maxWidthOrHeight: 1080,
-        useWebWorker: true
+        useWebWorker: false
       };
       const compressedFile = await imageCompression(file, options);
 
