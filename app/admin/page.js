@@ -100,12 +100,12 @@ export default function AdminDashboard() {
       // 1. Compress the image
       const compressedFile = await compressImage(file);
       
-      setToastMessage('Uploading to storage...');
+      setToastMessage('Saving to cloud... 0%');
 
       // 2. Upload to Firebase
       const downloadURL = await uploadToFirebase(compressedFile, (pct) => {
         setUploadProgress(pct);
-        setToastMessage(`Saving to cloud... ${pct}%. (Bucket: ${process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || 'MISSING!'})`);
+        setToastMessage(`Saving to cloud... ${pct}%`);
       });
 
       setProductImageURL(downloadURL);
