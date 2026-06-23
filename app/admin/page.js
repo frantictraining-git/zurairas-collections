@@ -105,7 +105,7 @@ export default function AdminDashboard() {
       // 2. Upload to Firebase
       const downloadURL = await uploadToFirebase(compressedFile, (pct) => {
         setUploadProgress(pct);
-        setToastMessage(`Saving to cloud... ${pct}%`);
+        setToastMessage(`Saving to cloud... ${pct}%. (Bucket: ${process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || 'MISSING!'})`);
       });
 
       setProductImageURL(downloadURL);
