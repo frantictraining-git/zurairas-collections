@@ -36,6 +36,8 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [toastMessage, setToastMessage] = useState('');
+  const [purchasePriceError, setPurchasePriceError] = useState('');
+  const [inventoryError, setInventoryError] = useState('');
 
   useEffect(() => {
     fetchOrders();
@@ -173,15 +175,17 @@ export default function AdminDashboard() {
     };
 
     if (productData.purchasePrice > productData.price) {
-      setToastMessage("Purchase Price (COGS) cannot be greater than the Selling Price.");
+      setPurchasePriceError("Purchase Price (COGS) cannot be greater than the Selling Price.");
       return;
     }
+    setPurchasePriceError('');
 
     const totalInventory = productData.inventory.S + productData.inventory.M + productData.inventory.L + productData.inventory.XL;
     if (totalInventory === 0) {
-      setToastMessage("Please enter stock quantity for at least one size (S, M, L, or XL).");
+      setInventoryError("Please enter stock quantity for at least one size (S, M, L, or XL).");
       return;
     }
+    setInventoryError('');
 
     try {
       const url = editingProduct ? `/api/admin/products/${editingProduct.id}` : '/api/admin/products';
@@ -434,7 +438,12 @@ export default function AdminDashboard() {
                 </div>
                 <div className={styles.formGroup}>
                   <label>Purchase Price / COGS (Hidden)</label>
-                  <input type="number" step="0.01" name="purchasePrice" defaultValue={editingProduct?.purchasePrice || ''} onFocus={(e) => e.target.select()} />
+                  <input type="number" step="0.01" name="purchasePrice" defaultValue={editingProduct?.purchasePrice || ''} onFocus={(e) => e.target.select()} style={{ borderColor: purchasePriceError ? '#dc3545' : '', borderWidth: purchasePriceError ? '2px' : '1px' }} />
+                  {purchasePriceError && (
+                    <div style={{ marginTop: '0.5rem', padding: '0.4rem', background: '#f8d7da', color: '#721c24', borderRadius: '4px', border: '1px solid #f5c6cb', fontSize: '0.8rem' }}>
+                      <strong>⚠️</strong> {purchasePriceError}
+                    </div>
+                  )}
                 </div>
                 <div className={styles.formGroup}>
                   <label>Discount Percentage (%)</label>
@@ -487,11 +496,16 @@ export default function AdminDashboard() {
               </div>
 
               <h4 style={{marginTop: '1rem', marginBottom: '0.5rem'}}>Inventory Quantities</h4>
+              {inventoryError && (
+                <div style={{ marginBottom: '1rem', padding: '0.6rem', background: '#f8d7da', color: '#721c24', borderRadius: '4px', border: '1px solid #f5c6cb', fontSize: '0.9rem' }}>
+                  <strong>⚠️ Error:</strong> {inventoryError}
+                </div>
+              )}
               <div className={styles.inventoryGrid}>
-                <div className={styles.formGroup}><label>Size S</label><input type="number" min="0" name="invS" defaultValue={editingProduct?.inventory?.S ?? ''} onFocus={(e) => e.target.select()} /></div>
-                <div className={styles.formGroup}><label>Size M</label><input type="number" min="0" name="invM" defaultValue={editingProduct?.inventory?.M ?? ''} onFocus={(e) => e.target.select()} /></div>
-                <div className={styles.formGroup}><label>Size L</label><input type="number" min="0" name="invL" defaultValue={editingProduct?.inventory?.L ?? ''} onFocus={(e) => e.target.select()} /></div>
-                <div className={styles.formGroup}><label>Size XL</label><input type="number" min="0" name="invXL" defaultValue={editingProduct?.inventory?.XL ?? ''} onFocus={(e) => e.target.select()} /></div>
+                <div className={styles.formGroup}><label>Size S</label><input type="number" min="0" name="invS" defaultValue={editingProduct?.inventory?.S ?? ''} onFocus={(e) => e.target.select()} style={{ borderColor: inventoryError ? '#dc3545' : '' }} /></div>
+                <div className={styles.formGroup}><label>Size M</label><input type="number" min="0" name="invM" defaultValue={editingProduct?.inventory?.M ?? ''} onFocus={(e) => e.target.select()} style={{ borderColor: inventoryError ? '#dc3545' : '' }} /></div>
+                <div className={styles.formGroup}><label>Size L</label><input type="number" min="0" name="invL" defaultValue={editingProduct?.inventory?.L ?? ''} onFocus={(e) => e.target.select()} style={{ borderColor: inventoryError ? '#dc3545' : '' }} /></div>
+                <div className={styles.formGroup}><label>Size XL</label><input type="number" min="0" name="invXL" defaultValue={editingProduct?.inventory?.XL ?? ''} onFocus={(e) => e.target.select()} style={{ borderColor: inventoryError ? '#dc3545' : '' }} /></div>
               </div>
 
               <div className={styles.modalActions}>
