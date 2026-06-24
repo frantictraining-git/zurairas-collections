@@ -34,12 +34,18 @@ export default function Navbar() {
   }, [menuOpen]);
 
   const handleNavClick = (e, href) => {
-    // Only intercept anchor links (smooth scroll). Let real page links navigate normally.
-    if (!href.startsWith('#')) return;
-    e.preventDefault();
+    // Always close the menu on click
     setMenuOpen(false);
-    const el = document.querySelector(href);
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
+
+    // If it's an anchor link and we're on the homepage, do a smooth scroll
+    if (href.includes('#') && window.location.pathname === '/') {
+      const targetId = href.split('#')[1];
+      const el = document.getElementById(targetId);
+      if (el) {
+        e.preventDefault();
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
   };
 
   return (
