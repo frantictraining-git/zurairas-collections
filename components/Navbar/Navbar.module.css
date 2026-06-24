@@ -384,11 +384,15 @@
   align-items: center;
   padding: 2rem;
   transform: translateX(100%);
-  transition: transform 0.5s var(--ease-out-expo, cubic-bezier(0.16,1,0.3,1));
+  visibility: hidden;
+  transition: transform 0.5s var(--ease-out-expo, cubic-bezier(0.16,1,0.3,1)), visibility 0.5s;
   z-index: 999;
 }
 
-.mobileMenu.mobileOpen { transform: translateX(0); }
+.mobileMenu.mobileOpen { 
+  transform: translateX(0); 
+  visibility: visible;
+}
 
 .mobileMenu nav ul {
   display: flex;

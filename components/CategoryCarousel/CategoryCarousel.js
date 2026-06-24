@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import styles from './CategoryCarousel.module.css';
 
@@ -58,6 +58,7 @@ const categories = [
 export default function CategoryCarousel() {
   const sectionRef = useRef(null);
   const trackRef   = useRef(null);
+  const [currentSlide, setCurrentSlide] = useState(0);
 
   useEffect(() => {
     const el = sectionRef.current;
@@ -71,37 +72,65 @@ export default function CategoryCarousel() {
     return () => observer.disconnect();
   }, []);
 
-  /* Drag-to-scroll */
+  const scrollToSlide = (index) => {
+    if (!trackRef.current) return;
+    setCurrentSlide(index);
+    const trackWidth = trackRef.current.clientWidth;
+    trackRef.current.scrollTo({
+      left: index * trackWidth,
+      behavior: 'smooth'
+    });
+  };
+
+  const nextSlide = () => {
+    if (currentSlide < categories.length - 1) scrollToSlide(currentSlide + 1);
+  };
+
+  const prevSlide = () => {
+    if (currentSlide > 0) scrollToSlide(currentSlide - 1);
+  };
+
+  /* Drag/Swipe logic to detect left/right swipe and change slide */
   useEffect(() => {
     const track = trackRef.current;
     if (!track) return;
-    let isDown = false, startX = 0, scrollLeft = 0;
-    const down  = (e) => { isDown = true; startX = (e.pageX || e.touches[0].pageX) - track.offsetLeft; scrollLeft = track.scrollLeft; track.style.cursor = 'grabbing'; };
-    const leave = ()  => { isDown = false; track.style.cursor = 'grab'; };
-    const move  = (e) => {
-      if (!isDown) return;
-      e.preventDefault();
-      const x    = (e.pageX || e.touches[0].pageX) - track.offsetLeft;
-      const walk = (x - startX) * 1.6;
-      track.scrollLeft = scrollLeft - walk;
+    let startX = 0, isDragging = false;
+
+    const down = (e) => {
+      isDragging = true;
+      startX = e.pageX || e.touches[0].pageX;
     };
-    track.addEventListener('mousedown',  down);
-    track.addEventListener('mouseleave', leave);
-    track.addEventListener('mouseup',    leave);
-    track.addEventListener('mousemove',  move);
-    track.addEventListener('touchstart', down,  { passive: true });
-    track.addEventListener('touchend',   leave);
-    track.addEventListener('touchmove',  move,  { passive: false });
+
+    const up = (e) => {
+      if (!isDragging) return;
+      isDragging = false;
+      const endX = e.pageX || (e.changedTouches ? e.changedTouches[0].pageX : startX);
+      const diff = startX - endX;
+
+      if (diff > 50 && currentSlide < categories.length - 1) {
+        scrollToSlide(currentSlide + 1);
+      } else if (diff < -50 && currentSlide > 0) {
+        scrollToSlide(currentSlide - 1);
+      } else {
+        // snap back
+        scrollToSlide(currentSlide);
+      }
+    };
+
+    track.addEventListener('mousedown', down);
+    track.addEventListener('mouseup', up);
+    track.addEventListener('mouseleave', () => { if(isDragging) { isDragging = false; scrollToSlide(currentSlide); } });
+    track.addEventListener('touchstart', down, { passive: true });
+    track.addEventListener('touchend', up);
+
     return () => {
-      track.removeEventListener('mousedown',  down);
-      track.removeEventListener('mouseleave', leave);
-      track.removeEventListener('mouseup',    leave);
-      track.removeEventListener('mousemove',  move);
+      track.removeEventListener('mousedown', down);
+      track.removeEventListener('mouseup', up);
+      track.removeEventListener('mouseleave', () => {});
       track.removeEventListener('touchstart', down);
-      track.removeEventListener('touchend',   leave);
-      track.removeEventListener('touchmove',  move);
+      track.removeEventListener('touchend', up);
     };
-  }, []);
+  }, [currentSlide]);
 
   return (
     <section id="categories" className={`${styles.section}`} ref={sectionRef} aria-labelledby="cat-heading">
@@ -117,7 +146,6 @@ export default function CategoryCarousel() {
         </div>
       </div>
 
-      {/* Full-bleed scrollable track */}
       <div className={styles.carouselOuter} role="region" aria-label="Category carousel">
         <div className={styles.track} ref={trackRef}>
           {categories.map((cat, i) => (
@@ -135,7 +163,7 @@ export default function CategoryCarousel() {
                   alt={`${cat.label} — Zuraira's Collections`}
                   fill
                   className={styles.img}
-                  sizes="320px"
+                  sizes="100vw"
                 />
                 <div className={styles.imgOverlay} />
               </div>
@@ -150,8 +178,35 @@ export default function CategoryCarousel() {
         </div>
       </div>
 
-      <div className={styles.dragHint} aria-hidden="true">
-        <span>← Drag to explore →</span>
+      <div className={styles.controls}>
+        <button 
+          className={styles.arrowBtn} 
+          onClick={prevSlide} 
+          disabled={currentSlide === 0}
+          aria-label="Previous category"
+          style={{ opacity: currentSlide === 0 ? 0.3 : 1 }}
+        >
+          ←
+        </button>
+        <div className={styles.dots}>
+          {categories.map((_, idx) => (
+            <button
+              key={idx}
+              className={`${styles.dot} ${currentSlide === idx ? styles.active : ''}`}
+              onClick={() => scrollToSlide(idx)}
+              aria-label={`Go to slide ${idx + 1}`}
+            />
+          ))}
+        </div>
+        <button 
+          className={styles.arrowBtn} 
+          onClick={nextSlide} 
+          disabled={currentSlide === categories.length - 1}
+          aria-label="Next category"
+          style={{ opacity: currentSlide === categories.length - 1 ? 0.3 : 1 }}
+        >
+          →
+        </button>
       </div>
     </section>
   );
