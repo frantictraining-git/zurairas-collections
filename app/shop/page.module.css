@@ -103,6 +103,7 @@
 @media (max-width: 900px) {
   .shopLayout {
     flex-direction: column;
+    align-items: stretch;
     gap: 0;
   }
 
@@ -128,5 +129,9 @@
   .shopHeader {
     padding: 2rem 0;
     margin-bottom: 2rem;
+  }
+
+  .topPagination {
+    justify-content: center;
   }
 }
