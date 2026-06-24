@@ -1,6 +1,7 @@
 import Navbar from '@/components/Navbar/Navbar';
 import Footer from '@/components/Footer/Footer';
 import ProductSidebar from '@/components/ProductSidebar/ProductSidebar';
+import ProductGallery from '@/components/ProductGallery/ProductGallery';
 import YouMayAlsoLike from '@/components/YouMayAlsoLike/YouMayAlsoLike';
 import { products } from '@/lib/data';
 import dbConnect from '@/lib/mongodb';
