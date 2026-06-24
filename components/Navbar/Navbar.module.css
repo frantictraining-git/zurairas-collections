@@ -376,7 +376,10 @@
 /* ─── Mobile Menu ─── */
 .mobileMenu {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100dvh;
   background: var(--color-ivory);
   display: flex;
   flex-direction: column;
