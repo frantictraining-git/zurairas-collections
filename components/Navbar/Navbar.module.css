@@ -439,7 +439,4 @@
   .hamburger { display: flex; }
 }
 
-@media (max-width: 480px) {
-  .logoSub { display: none; }
-  .logoDot { display: none; }
-}
+/* Removed mobile logo hiding */
