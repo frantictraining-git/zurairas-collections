@@ -10,7 +10,7 @@ const checkAuth = async () => {
 };
 
 export async function PUT(req, { params }) {
-  if (!(await checkAuth())) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+  if (!(await checkAdminAuth())) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   try {
     const { id } = await params;
     const data = await req.json();
@@ -24,7 +24,7 @@ export async function PUT(req, { params }) {
 }
 
 export async function DELETE(req, { params }) {
-  if (!(await checkAuth())) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+  if (!(await checkAdminAuth())) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   try {
     const { id } = await params;
     await dbConnect();

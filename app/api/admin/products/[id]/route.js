@@ -14,7 +14,7 @@ const checkAuth = async () => {
 };
 
 export async function PUT(req, { params }) {
-  const isAuth = await checkAuth();
+  const isAuth = await checkAdminAuth();
   if (!isAuth) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
 
   try {
@@ -36,7 +36,7 @@ export async function PUT(req, { params }) {
 }
 
 export async function DELETE(req, { params }) {
-  const isAuth = await checkAuth();
+  const isAuth = await checkAdminAuth();
   if (!isAuth) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
 
   try {

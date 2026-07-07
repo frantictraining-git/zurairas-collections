@@ -12,7 +12,7 @@ const checkAuth = async () => {
 };
 
 export async function PATCH(req, { params }) {
-  if (!(await checkAuth())) {
+  if (!(await checkAdminAuth())) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 

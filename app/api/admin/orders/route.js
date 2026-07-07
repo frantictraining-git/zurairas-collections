@@ -1,17 +1,10 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Order from '@/models/Order';
-import { cookies } from 'next/headers';
 
-// Simple admin auth check
-const checkAuth = async () => {
-  const cookieStore = await cookies();
-  const token = cookieStore.get('admin_token');
-  return token && token.value === process.env.ADMIN_PASSWORD;
-};
 
 export async function GET(req) {
-  if (!(await checkAuth())) {
+  if (!(await checkAdminAuth())) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 

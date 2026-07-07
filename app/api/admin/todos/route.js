@@ -10,7 +10,7 @@ const checkAuth = async () => {
 };
 
 export async function GET() {
-  if (!(await checkAuth())) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+  if (!(await checkAdminAuth())) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   try {
     await dbConnect();
     const todos = await Todo.find({}).sort({ completed: 1, dueDate: 1, createdAt: -1 });
@@ -21,7 +21,7 @@ export async function GET() {
 }
 
 export async function POST(req) {
-  if (!(await checkAuth())) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+  if (!(await checkAdminAuth())) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   try {
     const data = await req.json();
     await dbConnect();

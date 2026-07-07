@@ -11,7 +11,7 @@ import { uploadToFirebase } from '@/lib/uploadToFirebase';
 export default function AdminDashboard() {
   const router = useRouter();
   
-  // Tabs: 'orders', 'products', 'categories', 'todo'
+  // Tabs: 'orders', 'products', 'categories', 'todo', 'settings'
   const [activeTab, setActiveTab] = useState('orders');
   
   // State
@@ -38,6 +38,12 @@ export default function AdminDashboard() {
   const [toastMessage, setToastMessage] = useState('');
   const [purchasePriceError, setPurchasePriceError] = useState('');
   const [inventoryError, setInventoryError] = useState('');
+
+  // Settings State
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [settingsLoading, setSettingsLoading] = useState(false);
 
   useEffect(() => {
     fetchOrders();
@@ -231,6 +237,36 @@ export default function AdminDashboard() {
     fetchTodos();
   };
 
+  // SETTINGS ACTIONS
+  const handleUpdatePassword = async (e) => {
+    e.preventDefault();
+    if (newPassword !== confirmPassword) {
+      setToastMessage('New passwords do not match!');
+      return;
+    }
+    setSettingsLoading(true);
+    try {
+      const res = await fetch('/api/admin/settings/password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ currentPassword, newPassword })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setToastMessage('Password updated successfully! 🔒');
+        setCurrentPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
+      } else {
+        setToastMessage(`Error: ${data.message}`);
+      }
+    } catch (err) {
+      setToastMessage('Network error updating password.');
+    } finally {
+      setSettingsLoading(false);
+    }
+  };
+
   if (loading) return <div className={styles.loading}>Loading Dashboard...</div>;
 
   return (
@@ -243,6 +279,7 @@ export default function AdminDashboard() {
           <div className={`${styles.navItem} ${activeTab === 'products' ? styles.active : ''}`} onClick={() => setActiveTab('products')}>👗 Products</div>
           <div className={`${styles.navItem} ${activeTab === 'categories' ? styles.active : ''}`} onClick={() => setActiveTab('categories')}>📂 Categories</div>
           <div className={`${styles.navItem} ${activeTab === 'todo' ? styles.active : ''}`} onClick={() => setActiveTab('todo')}>📝 To-Do List</div>
+          <div className={`${styles.navItem} ${activeTab === 'settings' ? styles.active : ''}`} onClick={() => setActiveTab('settings')}>⚙️ Settings</div>
         </nav>
         <div className={styles.logoutWrapper}>
           <button className={styles.logoutBtn} onClick={() => { document.cookie = 'admin_token=; Max-Age=0; path=/'; router.push('/admin/login'); }}>Logout</button>
@@ -382,6 +419,33 @@ export default function AdminDashboard() {
                 </div>
               ))}
               {todos.length === 0 && <p style={{textAlign: 'center', marginTop: '2rem'}}>You're all caught up!</p>}
+            </div>
+          </div>
+        )}
+
+        {/* ─── SETTINGS TAB ─── */}
+        {activeTab === 'settings' && (
+          <div>
+            <div className={styles.sectionHeader}><h2>Admin Settings</h2></div>
+            <div className={styles.todoList} style={{ maxWidth: '600px' }}>
+              <h3 style={{ marginBottom: '1.5rem' }}>Change Password</h3>
+              <form onSubmit={handleUpdatePassword} className={styles.form}>
+                <div className={styles.formGroup}>
+                  <label>Current Password</label>
+                  <input type="password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} required className={styles.input} />
+                </div>
+                <div className={styles.formGroup}>
+                  <label>New Password</label>
+                  <input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required className={styles.input} minLength="8" />
+                </div>
+                <div className={styles.formGroup}>
+                  <label>Confirm New Password</label>
+                  <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required className={styles.input} minLength="8" />
+                </div>
+                <button type="submit" disabled={settingsLoading} className={styles.saveBtn} style={{ marginTop: '1rem' }}>
+                  {settingsLoading ? 'Updating...' : 'Update Password'}
+                </button>
+              </form>
             </div>
           </div>
         )}

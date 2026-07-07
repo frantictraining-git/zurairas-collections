@@ -1,3 +1,4 @@
+import { checkAdminAuth } from '@/lib/adminAuth';
 import { NextResponse } from 'next/server';
 import sharp from 'sharp';
 import { cookies } from 'next/headers';

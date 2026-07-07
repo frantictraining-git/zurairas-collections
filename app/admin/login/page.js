@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
 
 export default function AdminLogin() {
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -19,14 +20,15 @@ export default function AdminLogin() {
       const res = await fetch('/api/admin/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password })
+        body: JSON.stringify({ email, password })
       });
 
       if (res.ok) {
         router.push('/admin');
         router.refresh(); // force reload to respect cookies
       } else {
-        setError('Incorrect password');
+        const data = await res.json();
+        setError(data.message || 'Incorrect credentials');
       }
     } catch (err) {
       setError('Something went wrong');
@@ -40,6 +42,14 @@ export default function AdminLogin() {
       <div className={styles.loginCard}>
         <h1>Boutique Admin</h1>
         <form onSubmit={handleLogin} className={styles.form}>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Admin Email"
+            className={styles.input}
+            required
+          />
           <input
             type="password"
             value={password}
