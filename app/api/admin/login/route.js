@@ -4,8 +4,10 @@ export async function POST(req) {
   try {
     const { password } = await req.json();
     
-    // Check against env variable
-    if (password === process.env.ADMIN_PASSWORD) {
+    const validPassword = process.env.ADMIN_PASSWORD || 'ZurairaAdmin2026';
+    
+    // Check against env variable or fallback
+    if (password === validPassword) {
       const response = NextResponse.json({ success: true });
       // Set an HTTP-only cookie
       response.cookies.set('admin_token', password, {
